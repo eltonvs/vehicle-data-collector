@@ -3,8 +3,9 @@
     <SwitchPreference
         android:defaultValue="true"
         android:key="bluetooth_switch"
-        android:summary="@string/pref_description_enable_bluetooth"
-        android:title="@string/pref_title_enable_bluetooth" />
+        android:summaryOff="@string/pref_description_enable_bluetooth"
+        android:summaryOn="@string/pref_description_disable_bluetooth"
+        android:title="@string/pref_title_switch_bluetooth" />
 
     <ListPreference
         android:defaultValue="-1"
@@ -12,6 +13,6 @@
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:summary="@string/pref_description_bluetooth_devices"
-        android:title="@string/pref_title_bluetooth_devices"/>
+        android:title="@string/pref_title_bluetooth_devices" />
 
 </PreferenceScreen>

@@ -45,8 +45,9 @@
     <!-- Bluetooth settings -->
     <string name="pref_header_bluetooth">Bluetooth</string>
 
-    <string name="pref_title_enable_bluetooth">Enable Bluetooth</string>
+    <string name="pref_title_switch_bluetooth">Enable/Disable Bluetooth</string>
     <string name="pref_description_enable_bluetooth">Enable Bluetooth to connect with OBD</string>
+    <string name="pref_description_disable_bluetooth">Disable Bluetooth to disconnect with OBD</string>
 
     <string name="pref_title_bluetooth_devices">Bluetooth Devices</string>
     <string name="pref_description_bluetooth_devices">List of paired bluetooth devices</string>

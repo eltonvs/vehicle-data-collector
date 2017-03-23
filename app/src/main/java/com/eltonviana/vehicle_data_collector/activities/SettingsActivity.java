@@ -6,9 +6,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -16,19 +13,13 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
 import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.eltonviana.vehicle_data_collector.exceptions.BluetoothNotAvailableException;
-import com.eltonviana.vehicle_data_collector.exceptions.NoBondedDevicesException;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -208,71 +199,81 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class BluetoothPreferenceFragment extends PreferenceFragment {
+        private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        private SwitchPreference btSwitch;
+        private ListPreference btDevices;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_bluetooth);
             setHasOptionsMenu(true);
 
-            SwitchPreference btSwitch = (SwitchPreference) findPreference(BLUETOOTH_SWITCH);
+            btSwitch = (SwitchPreference) findPreference(BLUETOOTH_SWITCH);
+            btDevices = (ListPreference) findPreference(BLUETOOTH_DEVICES);
 
-            btSwitch.setChecked(false);
-
-            try {
-                fillBluetoothDevicesList((ListPreference) findPreference(BLUETOOTH_DEVICES));
-            } catch (BluetoothNotAvailableException e) {
-                e.printStackTrace();
+            if (btAdapter == null) {
+                // Bluetooth not available
+                btSwitch.setChecked(false);
+                btSwitch.setEnabled(false);
+                btDevices.setEnabled(false);
                 Toast.makeText(getActivity(), "This device does not support Bluetooth.",
                         Toast.LENGTH_LONG).show();
-            } catch (NoBondedDevicesException e) {
-                e.printStackTrace();
-                Toast.makeText(getActivity(), "This device doesn't have any bonded device.",
-                        Toast.LENGTH_LONG).show();
+
+                // Terminate
+                return;
             }
 
-            bindPreferenceSummaryToValue(findPreference(BLUETOOTH_DEVICES));
+            // Set switch with the current bluetooth status
+            btSwitch.setChecked(btAdapter.isEnabled());
+
+            if (btAdapter.isEnabled()) {
+                fillBluetoothDevicesList();
+            }
+
+            btSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean val = !((SwitchPreference) preference).isChecked();
+
+                    if (val) {
+                        turnOnBluetooth();
+                    } else {
+                        turnOffBluetooth();
+                    }
+
+                    return true;
+                }
+            });
+            bindPreferenceSummaryToValue(btDevices);
         }
 
-        private void fillBluetoothDevicesList(ListPreference bluetoothDevicesList) throws BluetoothNotAvailableException, NoBondedDevicesException {
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        private void fillBluetoothDevicesList() {
+            if (btAdapter != null) {
+                ArrayList<CharSequence> pairedDevicesStrings = new ArrayList<>();
+                ArrayList<CharSequence> pairedDevicesAddress = new ArrayList<>();
+                for (BluetoothDevice device : btAdapter.getBondedDevices()) {
+                    pairedDevicesStrings.add(device.getName() + "\n" + device.getAddress());
+                    pairedDevicesAddress.add(device.getAddress());
+                }
 
-            if (mBluetoothAdapter == null) {
-                throw new BluetoothNotAvailableException();
+                btDevices.setEntries(pairedDevicesStrings.toArray(new CharSequence[0]));
+                btDevices.setEntryValues(pairedDevicesAddress.toArray(new CharSequence[0]));
             }
-
-            if (mBluetoothAdapter.getBondedDevices().isEmpty()) {
-                throw new NoBondedDevicesException();
-            }
-
-            ArrayList<CharSequence> pairedDevicesStrings = new ArrayList<>();
-            ArrayList<CharSequence> pairedDevicesAddress = new ArrayList<>();
-            for (BluetoothDevice device : mBluetoothAdapter.getBondedDevices()) {
-                pairedDevicesStrings.add(device.getName() + "\n" + device.getAddress());
-                pairedDevicesAddress.add(device.getAddress());
-            }
-
-            bluetoothDevicesList.setEntries(pairedDevicesStrings.toArray(new CharSequence[0]));
-            bluetoothDevicesList.setEntryValues(pairedDevicesAddress.toArray(new CharSequence[0]));
         }
 
-        private void turnOnBluetooth() throws BluetoothNotAvailableException {
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-            if (mBluetoothAdapter == null) {
-                throw new BluetoothNotAvailableException();
+        private void turnOnBluetooth() {
+            if (btAdapter != null) {
+                btAdapter.enable();
+                btDevices.setEnabled(true);
             }
-
-            mBluetoothAdapter.enable();
         }
 
-        private void turnOffBluetooth() throws BluetoothNotAvailableException {
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-            if (mBluetoothAdapter == null) {
-                throw new BluetoothNotAvailableException();
+        private void turnOffBluetooth() {
+            if (btAdapter == null) {
+                btAdapter.disable();
+                btDevices.setEnabled(false);
             }
-
-            mBluetoothAdapter.disable();
         }
 
         @Override
