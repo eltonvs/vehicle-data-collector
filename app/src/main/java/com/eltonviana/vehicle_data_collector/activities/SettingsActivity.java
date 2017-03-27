@@ -270,7 +270,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void turnOffBluetooth() {
-            if (btAdapter == null) {
+            if (btAdapter != null) {
                 btAdapter.disable();
                 btDevices.setEnabled(false);
             }
