@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -293,11 +294,62 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GPSPreferenceFragment extends PreferenceFragment {
+        private LocationManager locationManager;
+        private SwitchPreference gpsSwitch;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_gps);
             setHasOptionsMenu(true);
+
+            locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+            gpsSwitch = (SwitchPreference) findPreference(GPS_SWITCH);
+
+            if (locationManager == null) {
+                // Bluetooth not available
+                gpsSwitch.setChecked(false);
+                gpsSwitch.setEnabled(false);
+                Toast.makeText(getActivity(), "This device does not support GPS.",
+                        Toast.LENGTH_LONG).show();
+
+                // Terminate
+                return;
+            }
+
+            // Set switch with the current GPS status
+            gpsSwitch.setChecked(isGPSEnabled());
+
+            gpsSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean val = !((SwitchPreference) preference).isChecked();
+
+                    if (val) {
+                        turnOnGPS();
+                    } else {
+                        turnOffGPS();
+                    }
+
+                    return true;
+                }
+            });
+        }
+
+        private void turnOnGPS() {
+            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)", Toast.LENGTH_SHORT).show();
+        }
+
+        private void turnOffGPS() {
+            Toast.makeText(getActivity(), "Turning GPS off... (not working yet)", Toast.LENGTH_SHORT).show();
+        }
+
+        private boolean isGPSEnabled() {
+            if (locationManager != null) {
+                return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            }
+            return false;
         }
 
         @Override
