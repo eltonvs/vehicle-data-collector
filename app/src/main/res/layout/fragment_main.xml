@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.eltonviana.vehicle_data_collector.activities.MainActivityFragment"
+    tools:context="br.ufrn.imd.vehicle_data_collector.activities.MainActivityFragment"
     tools:showIn="@layout/activity_main">
 
     <TextView

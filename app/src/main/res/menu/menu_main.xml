@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.eltonviana.vehicle_data_collector.activities.MainActivity">
+    tools:context="br.ufrn.imd.vehicle_data_collector.activities.MainActivity">
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
