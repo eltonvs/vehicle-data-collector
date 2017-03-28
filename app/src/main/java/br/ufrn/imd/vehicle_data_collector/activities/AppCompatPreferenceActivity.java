@@ -1,4 +1,4 @@
-package com.eltonviana.vehicle_data_collector.activities;
+package br.ufrn.imd.vehicle_data_collector.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.eltonviana.vehicle_data_collector.activities;
+package br.ufrn.imd.vehicle_data_collector.activities;
 
 
 import android.annotation.TargetApi;
@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import br.ufrn.imd.vehicle_data_collector.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -200,7 +202,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class BluetoothPreferenceFragment extends PreferenceFragment {
-        private BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         private SwitchPreference btSwitch;
         private ListPreference btDevices;
 
@@ -346,10 +348,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private boolean isGPSEnabled() {
-            if (locationManager != null) {
-                return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            }
-            return false;
+            return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
         @Override
