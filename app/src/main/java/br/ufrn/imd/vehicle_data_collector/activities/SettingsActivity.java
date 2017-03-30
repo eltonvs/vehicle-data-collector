@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -18,6 +19,8 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.github.pires.obd.enums.ObdProtocols;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,15 +177,52 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DataSyncPreferenceFragment extends PreferenceFragment {
+        SwitchPreference dataSyncSwitch;
+        EditTextPreference uploadURL;
+        EditTextPreference vehicleID;
+        ListPreference syncFrequency;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
 
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_POST_URL));
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_VEHICLE_ID));
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_FREQUENCY));
+            dataSyncSwitch = (SwitchPreference) findPreference(DATA_SYNC_SWITCH);
+            uploadURL = (EditTextPreference) findPreference(DATA_SYNC_POST_URL);
+            vehicleID = (EditTextPreference) findPreference(DATA_SYNC_VEHICLE_ID);
+            syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
+
+            dataSyncSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean val = !((SwitchPreference) preference).isChecked();
+
+                    if (val) {
+                        turnOnDataSync();
+                    } else {
+                        turnOffDataSync();
+                    }
+
+                    return true;
+                }
+            });
+
+            bindPreferenceSummaryToValue(uploadURL);
+            bindPreferenceSummaryToValue(vehicleID);
+            bindPreferenceSummaryToValue(syncFrequency);
+        }
+
+        /**
+         * TODO
+         */
+        private void turnOnDataSync() {
+        }
+
+        /**
+         * TODO
+         */
+        private void turnOffDataSync() {
         }
 
         @Override
@@ -368,14 +408,31 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class OBDPreferenceFragment extends PreferenceFragment {
+        private ListPreference obdProtocols;
+        private EditTextPreference engineDisplacement;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_obd);
             setHasOptionsMenu(true);
 
-            bindPreferenceSummaryToValue(findPreference(OBD_PROTOCOL));
-            bindPreferenceSummaryToValue(findPreference(ENGINE_DISPLACEMENT));
+            obdProtocols = (ListPreference) findPreference(OBD_PROTOCOL);
+            engineDisplacement = (EditTextPreference) findPreference(ENGINE_DISPLACEMENT);
+
+            fillObdProtocols();
+
+            bindPreferenceSummaryToValue(obdProtocols);
+            bindPreferenceSummaryToValue(engineDisplacement);
+        }
+
+        private void fillObdProtocols() {
+            ArrayList<CharSequence> protocolsStrings = new ArrayList<>();
+            for (ObdProtocols protocol : ObdProtocols.values()) {
+                protocolsStrings.add(protocol.name());
+            }
+            obdProtocols.setEntries(protocolsStrings.toArray(new CharSequence[0]));
+            obdProtocols.setEntryValues(protocolsStrings.toArray(new CharSequence[0]));
         }
 
         @Override
