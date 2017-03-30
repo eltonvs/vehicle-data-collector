@@ -177,15 +177,52 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class DataSyncPreferenceFragment extends PreferenceFragment {
+        SwitchPreference dataSyncSwitch;
+        EditTextPreference uploadURL;
+        EditTextPreference vehicleID;
+        ListPreference syncFrequency;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_data_sync);
             setHasOptionsMenu(true);
 
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_POST_URL));
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_VEHICLE_ID));
-            bindPreferenceSummaryToValue(findPreference(DATA_SYNC_FREQUENCY));
+            dataSyncSwitch = (SwitchPreference) findPreference(DATA_SYNC_SWITCH);
+            uploadURL = (EditTextPreference) findPreference(DATA_SYNC_POST_URL);
+            vehicleID = (EditTextPreference) findPreference(DATA_SYNC_VEHICLE_ID);
+            syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
+
+            dataSyncSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    boolean val = !((SwitchPreference) preference).isChecked();
+
+                    if (val) {
+                        turnOnDataSync();
+                    } else {
+                        turnOffDataSync();
+                    }
+
+                    return true;
+                }
+            });
+
+            bindPreferenceSummaryToValue(uploadURL);
+            bindPreferenceSummaryToValue(vehicleID);
+            bindPreferenceSummaryToValue(syncFrequency);
+        }
+
+        /**
+         * TODO
+         */
+        private void turnOnDataSync() {
+        }
+
+        /**
+         * TODO
+         */
+        private void turnOffDataSync() {
         }
 
         @Override
