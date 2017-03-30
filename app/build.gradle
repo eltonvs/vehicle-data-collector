@@ -18,6 +18,18 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            java {
+                exclude '**/vdc'
+            }
+        }
+        androidTest {
+            java {
+                exclude '**/vdc'
+            }
+        }
+    }
 }
 
 dependencies {
