@@ -19,14 +19,14 @@ public class ObdReading implements Serializable{
     private double longitude;
     private double altitude;
 
-    private byte[] readings;
+    private String readings;
 
     public ObdReading(){
 
     }
 
     public ObdReading(double latitude, double longitude, double altitude, long timestamp,
-                      String vehicleid, byte[] readings) {
+                      String vehicleid, String readings) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
@@ -83,23 +83,21 @@ public class ObdReading implements Serializable{
         this.timestamp = timestamp;
     }
 
-    public byte[] getReadings() {
+    public String getReadings() {
         return readings;
     }
 
-    public void setReadings(byte[] readings) {
+    public void setReadings(String readings) {
         this.readings = readings;
     }
 
-
-    // FIXME: 30/03/2017
     public String toString() {
 
         return "lat:" + latitude + ";" +
                 "long:" + longitude + ";" +
                 "alt:" + altitude + ";" +
                 "vehicleid:" + vehicleId + ";" +
-                "readings:" + readings.toString().substring(10).replace("}", "").replace(",", ";");
+                "readings: " +  readings;
     }
 }
 

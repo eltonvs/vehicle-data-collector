@@ -24,7 +24,6 @@ public class ObdReadingDao {
         bd = obdReadingDbHelper.getWritableDatabase();
     }
 
-    //FIXME: 31/03/2017
     public void insert(ObdReading o) {
         ContentValues values = new ContentValues(6);
         values.put("VEHICLE_ID", o.getVehicleId());
@@ -55,7 +54,7 @@ public class ObdReadingDao {
                 obdReading.setLatitude(c.getDouble(3));
                 obdReading.setLongitude(c.getDouble(4));
                 obdReading.setAltitude(c.getDouble(5));
-                obdReading.setReadings(c.getBlob(6));
+                obdReading.setReadings(c.getString(6));
                 obdReadings.add(obdReading);
             }while(c.moveToNext());
         }
@@ -76,7 +75,7 @@ public class ObdReadingDao {
             obdReading.setLatitude(c.getDouble(3));
             obdReading.setLongitude(c.getDouble(4));
             obdReading.setAltitude(c.getDouble(5));
-            obdReading.setReadings(c.getBlob(6));
+            obdReading.setReadings(c.getString(6));
 
         }
         c.close();
