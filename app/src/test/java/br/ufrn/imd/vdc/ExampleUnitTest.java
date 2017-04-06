@@ -1,4 +1,4 @@
-package br.ufrn.imd.vehicle_data_collector;
+package br.ufrn.imd.vdc;
 
 import org.junit.Test;
 

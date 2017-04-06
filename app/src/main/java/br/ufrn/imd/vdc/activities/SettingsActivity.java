@@ -1,4 +1,4 @@
-package br.ufrn.imd.vehicle_data_collector.activities;
+package br.ufrn.imd.vdc.activities;
 
 
 import android.annotation.TargetApi;
@@ -25,7 +25,7 @@ import com.github.pires.obd.enums.ObdProtocols;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ufrn.imd.vehicle_data_collector.R;
+import br.ufrn.imd.vdc.R;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On

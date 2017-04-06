@@ -1,4 +1,4 @@
-package br.ufrn.imd.vehicle_data_collector.activities;
+package br.ufrn.imd.vdc.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import br.ufrn.imd.vehicle_data_collector.R;
+import br.ufrn.imd.vdc.R;
 
 /**
  * A placeholder fragment containing a simple view.

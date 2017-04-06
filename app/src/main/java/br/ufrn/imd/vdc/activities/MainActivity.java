@@ -1,4 +1,4 @@
-package br.ufrn.imd.vehicle_data_collector.activities;
+package br.ufrn.imd.vdc.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import br.ufrn.imd.vehicle_data_collector.R;
+import br.ufrn.imd.vdc.R;
 
 public class MainActivity extends AppCompatActivity {
 

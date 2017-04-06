@@ -6,10 +6,10 @@ import java.io.Serializable;
  * Created by Cephas on 27/03/2017.
  */
 
-public class ObdReading implements Serializable{
+public class ObdReading implements Serializable {
 
-    public static String[] COLUNAS = new String[]{  "ID", "VEHICLE_ID", "LATITUDE", "LONGITUDE", "ALTITUDE",
-                                                    "TIMESTAMP", "READINGS"};
+    public static String[] COLUNAS = new String[]{"ID", "VEHICLE_ID", "LATITUDE", "LONGITUDE", "ALTITUDE",
+            "TIMESTAMP", "READINGS"};
 
     private int id;
     private String vehicleId;
@@ -21,7 +21,7 @@ public class ObdReading implements Serializable{
 
     private String readings;
 
-    public ObdReading(){
+    public ObdReading() {
 
     }
 
@@ -97,7 +97,7 @@ public class ObdReading implements Serializable{
                 "long:" + longitude + ";" +
                 "alt:" + altitude + ";" +
                 "vehicleid:" + vehicleId + ";" +
-                "readings: " +  readings;
+                "readings: " + readings;
     }
 }
 
