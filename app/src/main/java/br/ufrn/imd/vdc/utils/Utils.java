@@ -15,22 +15,21 @@ public class Utils {
     private HashMap<String, String> readingsMap;
 
     public Utils() {
-        this.readingsMap = new HashMap<String, String>();
+        readingsMap = new HashMap<>();
     }
 
     public void putReadingOnMap(String key, String value) {
-        this.readingsMap.put(key, value);
+        readingsMap.put(key, value);
     }
 
     public String getJsonStringFromMap() {
         Gson gson = new Gson();
-        String json = gson.toJson(this.readingsMap);
-        return json;
+        return gson.toJson(readingsMap);
     }
 
     public HashMap<String, String> getReadingsMap() {
         if (readingsMap.size() != 0) {
-            return this.readingsMap;
+            return readingsMap;
         } else {
             return null;
         }
@@ -40,8 +39,7 @@ public class Utils {
         Gson gson = new Gson();
         Type typeOfHashMap = new TypeToken<HashMap<String, String>>() {
         }.getType();
-        HashMap<String, String> map = gson.fromJson(readingString, typeOfHashMap); // This type must match TypeToken
-        return map;
+        return gson.fromJson(readingString, typeOfHashMap);
     }
 
 }

@@ -42,7 +42,7 @@ public class ObdReadingDao {
     }
 
     public List<ObdReading> list() {
-        List<ObdReading> obdReadings = new ArrayList<ObdReading>();
+        List<ObdReading> obdReadings = new ArrayList<>();
         Cursor c = bd.query("OBD_READING", ObdReading.COLUNAS,
                 null, null, null, null, "TIMESTAMP");
         if (c.moveToFirst()) {
