@@ -1,4 +1,4 @@
-package br.ufrn.imd.vehicle_data_collector;
+package br.ufrn.imd.vdc;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.imd.vehicle_data_collector", appContext.getPackageName());
+        assertEquals("com.imd.vdc", appContext.getPackageName());
     }
 }

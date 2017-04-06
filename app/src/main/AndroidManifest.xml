@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="br.ufrn.imd.vehicle_data_collector">
+    package="br.ufrn.imd.vdc">
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="br.ufrn.imd.vehicle_data_collector.activities.MainActivity"
+            android:name="br.ufrn.imd.vdc.activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -28,14 +28,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="br.ufrn.imd.vehicle_data_collector.activities.SettingsActivity"
+            android:name="br.ufrn.imd.vdc.activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="br.ufrn.imd.vehicle_data_collector.activities.MainActivity"
+            android:parentActivityName="br.ufrn.imd.vdc.activities.MainActivity"
             tools:targetApi="jelly_bean">
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="br.ufrn.imd.vehicle_data_collector.activities.MainActivity" />
+                android:value="br.ufrn.imd.vdc.activities.MainActivity" />
         </activity>
     </application>
 

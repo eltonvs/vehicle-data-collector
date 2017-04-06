@@ -29,7 +29,7 @@ public class ObdReadingDao {
         values.put("VEHICLE_ID", o.getVehicleId());
         values.put("TIMESTAMP", o.getTimestamp());
         values.put("LATITUDE", o.getLatitude());
-        values.put("LONGITUDE",o.getLongitude());
+        values.put("LONGITUDE", o.getLongitude());
         values.put("ALTITUDE", o.getAltitude());
         values.put("READINGS", (o.getReadings()));
 
@@ -41,12 +41,12 @@ public class ObdReadingDao {
         bd.delete("OBD_READING", "ID=?", id);
     }
 
-    public List<ObdReading> list(){
+    public List<ObdReading> list() {
         List<ObdReading> obdReadings = new ArrayList<ObdReading>();
         Cursor c = bd.query("OBD_READING", ObdReading.COLUNAS,
                 null, null, null, null, "TIMESTAMP");
-        if (c.moveToFirst()){
-            do{
+        if (c.moveToFirst()) {
+            do {
                 ObdReading obdReading = new ObdReading();
                 obdReading.setId(c.getInt(0));
                 obdReading.setVehicleId(c.getString(1));
@@ -56,19 +56,19 @@ public class ObdReadingDao {
                 obdReading.setAltitude(c.getDouble(5));
                 obdReading.setReadings(c.getString(6));
                 obdReadings.add(obdReading);
-            }while(c.moveToNext());
+            } while (c.moveToNext());
         }
         c.close();
         return obdReadings;
     }
 
-    public ObdReading findById(int id){
+    public ObdReading findById(int id) {
         ObdReading obdReading = new ObdReading();
 
         Cursor c = bd.query("OBD_READING", ObdReading.COLUNAS,
-                "id="+id, null, null, null, null);
+                "id=" + id, null, null, null, null);
 
-        if (c.moveToFirst()){
+        if (c.moveToFirst()) {
             obdReading.setId(c.getInt(0));
             obdReading.setVehicleId(c.getString(1));
             obdReading.setTimestamp(c.getLong(2));

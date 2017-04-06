@@ -6,9 +6,9 @@ import java.io.Serializable;
  * Created by Cephas on 27/03/2017.
  */
 
-public class Person implements Serializable{
+public class Person implements Serializable {
 
-    public static String[] COLUNAS = new String[]{  "ID", "NAME", "PASSWORD" };
+    public static String[] COLUNAS = new String[]{"ID", "NAME", "PASSWORD"};
 
     private int id;
     private String name;
@@ -41,7 +41,7 @@ public class Person implements Serializable{
     public String toString() {
 
         return "id:" + id + ";" +
-               "name:" + name + ";" +
-               "password:" + password + ";";
+                "name:" + name + ";" +
+                "password:" + password + ";";
     }
 }

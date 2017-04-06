@@ -14,34 +14,34 @@ public class Utils {
 
     private HashMap<String, String> readingsMap;
 
-    public Utils(){
-         this.readingsMap = new HashMap<String, String>();
+    public Utils() {
+        this.readingsMap = new HashMap<String, String>();
     }
 
     public void putReadingOnMap(String key, String value) {
         this.readingsMap.put(key, value);
     }
 
-    public String getJsonStringFromMap(){
+    public String getJsonStringFromMap() {
         Gson gson = new Gson();
         String json = gson.toJson(this.readingsMap);
         return json;
     }
 
-    public HashMap<String, String> getReadingsMap(){
-        if(readingsMap.size() != 0){
+    public HashMap<String, String> getReadingsMap() {
+        if (readingsMap.size() != 0) {
             return this.readingsMap;
-        }
-        else{
+        } else {
             return null;
         }
     }
 
-    public HashMap<String, String> getMapFromJsonString(String readingString){
+    public HashMap<String, String> getMapFromJsonString(String readingString) {
         Gson gson = new Gson();
-        Type typeOfHashMap = new TypeToken<HashMap<String, String>>() { }.getType();
+        Type typeOfHashMap = new TypeToken<HashMap<String, String>>() {
+        }.getType();
         HashMap<String, String> map = gson.fromJson(readingString, typeOfHashMap); // This type must match TypeToken
-       return map;
+        return map;
     }
 
 }
