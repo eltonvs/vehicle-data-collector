@@ -16,4 +16,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btnBluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bluetooth Activity"
+        tools:layout_editor_absoluteX="108dp"
+        tools:layout_editor_absoluteY="269dp" />
+
 </android.support.constraint.ConstraintLayout>

@@ -6,16 +6,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import br.ufrn.imd.vdc.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        setup();
+    }
+
+    private void setup() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Button btnBluetooth = (Button) findViewById(R.id.btnBluetooth);
+        btnBluetooth.setOnClickListener(this);
         setSupportActionBar(toolbar);
     }
 
@@ -41,5 +50,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnBluetooth:
+                Intent intent = new Intent(getBaseContext(), BluetoothActivity.class);
+                MainActivity.this.startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }

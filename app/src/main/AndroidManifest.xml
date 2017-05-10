@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="br.ufrn.imd.vdc.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
@@ -28,10 +28,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="br.ufrn.imd.vdc.activities.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName="br.ufrn.imd.vdc.activities.MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             tools:targetApi="jelly_bean">
+
+            <!-- The meta-data tag is required if you support API level 15 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="br.ufrn.imd.vdc.activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.BluetoothActivity"
+            android:label="@string/title_activity_bluetooth"
+            android:parentActivityName=".activities.MainActivity"
+            tools:targetApi="jelly_bean">
+
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
