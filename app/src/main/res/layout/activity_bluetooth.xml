@@ -6,14 +6,6 @@
     tools:context="br.ufrn.imd.vdc.activities.BluetoothActivity">
 
     <TextView
-        android:id="@+id/tvBluetooth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bluetooth Activity"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
-
-    <TextView
         android:id="@+id/tvResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
