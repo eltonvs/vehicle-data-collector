@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.github.pires.obd.commands.ObdCommand;
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
 import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
 import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
@@ -29,7 +28,7 @@ public class ObdAsyncTask extends AsyncTask<Void, Void, Void> {
     private BluetoothDevice device;
     private BluetoothSocket btSocket;
     private TextView tvResults;
-    private List<ObdCommand> readings = new ArrayList<>();
+    private List<ICommand> readings = new ArrayList<>();
 
     public ObdAsyncTask(Activity context, BluetoothDevice device) {
         super();
@@ -69,7 +68,7 @@ public class ObdAsyncTask extends AsyncTask<Void, Void, Void> {
             InputStream socketIS = btSocket.getInputStream();
             OutputStream socketOS = btSocket.getOutputStream();
 
-            for (ObdCommand cmd : ObdCommandList.getInstance().getCommands()) {
+            for (ICommand cmd : ObdCommandList.getInstance().getCommands()) {
                 cmd.run(socketIS, socketOS);
                 readings.add(cmd);
             }
@@ -92,7 +91,7 @@ public class ObdAsyncTask extends AsyncTask<Void, Void, Void> {
 
         // Write result on TextView
         StringBuilder sb = new StringBuilder();
-        for (ObdCommand cmd : readings) {
+        for (ICommand cmd : readings) {
             sb.append(cmd.getName()).append(" = ").append(cmd.getFormattedResult()).append("\n");
         }
         if (!sb.toString().isEmpty()) {

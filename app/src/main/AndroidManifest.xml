@@ -49,6 +49,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="br.ufrn.imd.vdc.activities.MainActivity" />
         </activity>
+
+        <service
+            android:name=".io.ObdGatewayService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
