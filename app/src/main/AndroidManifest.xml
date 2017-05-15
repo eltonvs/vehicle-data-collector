@@ -38,22 +38,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="br.ufrn.imd.vdc.activities.MainActivity" />
         </activity>
-        <activity
-            android:name=".activities.BluetoothActivity"
-            android:label="@string/title_activity_bluetooth"
-            android:parentActivityName=".activities.MainActivity"
-            tools:targetApi="jelly_bean">
 
-            <!-- The meta-data tag is required if you support API level 15 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="br.ufrn.imd.vdc.activities.MainActivity" />
-        </activity>
-
-        <service
-            android:name=".io.ObdGatewayService"
-            android:enabled="true"
-            android:exported="true"></service>
+        <service android:name=".io.ObdGatewayService" />
     </application>
 
 </manifest>

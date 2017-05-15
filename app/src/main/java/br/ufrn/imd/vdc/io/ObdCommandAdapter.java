@@ -11,7 +11,7 @@ import java.io.OutputStream;
  */
 
 public class ObdCommandAdapter implements ICommand {
-    ObdCommand obdCommand;
+    private final ObdCommand obdCommand;
 
     public ObdCommandAdapter(ObdCommand command) {
         this.obdCommand = command;

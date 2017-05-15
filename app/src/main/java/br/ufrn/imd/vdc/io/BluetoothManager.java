@@ -28,7 +28,7 @@ public class BluetoothManager {
      *
      * @param dev The remote device to connect to
      * @return The BluetoothSocket
-     * @throws IOException
+     * @throws IOException Bluetooth connection error
      */
     public static BluetoothSocket connect(BluetoothDevice dev) throws IOException {
         BluetoothSocket sock = null;

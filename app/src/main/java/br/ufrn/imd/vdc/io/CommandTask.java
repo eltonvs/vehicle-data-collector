@@ -5,8 +5,8 @@ package br.ufrn.imd.vdc.io;
  */
 
 public abstract class CommandTask {
+    private final ICommand command;
     private Long id;
-    private ICommand command;
     private CommandTaskState state;
 
     public CommandTask(ICommand command) {

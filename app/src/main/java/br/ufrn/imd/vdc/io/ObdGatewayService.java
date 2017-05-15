@@ -1,8 +1,11 @@
 package br.ufrn.imd.vdc.io;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 
 import com.github.pires.obd.commands.protocol.EchoOffCommand;
@@ -15,19 +18,18 @@ import com.github.pires.obd.exceptions.UnsupportedCommandException;
 
 import java.io.IOException;
 
+import br.ufrn.imd.vdc.activities.SettingsActivity;
+
 public class ObdGatewayService extends AbstractGatewayService {
     private static final String TAG = ObdGatewayService.class.getName();
     private BluetoothDevice device;
     private BluetoothSocket btSocket;
 
-    public ObdGatewayService(Context context, BluetoothDevice device) {
-        super(context);
-        this.device = device;
-    }
-
     @Override
     public void startService() throws IOException {
         Log.d(TAG, "startService: Starting Service...");
+
+        setupBluetoothDevice();
 
         try {
             startObdConnection();
@@ -35,6 +37,32 @@ public class ObdGatewayService extends AbstractGatewayService {
             Log.e(TAG, "startService: Error while establishing a connection", e);
             stopService();
             throw e;
+        }
+    }
+
+    private void setupBluetoothDevice() {
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final String btDeviceMAC = prefs.getString(SettingsActivity.BLUETOOTH_DEVICES, "-1");
+
+        if (!btDeviceMAC.equals("-1")) {
+            Log.d(TAG, "Creating a Bluetooth Device");
+            device = btAdapter.getRemoteDevice(btDeviceMAC);
+            Log.d(TAG, "Device Name: " + device.getName());
+
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ActionBar actionBar = context.getSupportActionBar();
+                    if (actionBar != null) {
+                        actionBar.setSubtitle(device.getName() + " - " + btDeviceMAC);
+                    }
+                }
+            });
+
+            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
+                Log.d(TAG, "Device is bonded, starting connection");
+            }
         }
     }
 
@@ -77,17 +105,17 @@ public class ObdGatewayService extends AbstractGatewayService {
 
     private void obdSetup() throws IOException {
         try {
-            queueTask(new ObdCommandTask(new ObdCommandAdapter(new ObdResetCommand())));
+            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new ObdResetCommand())));
 
             // Sleep while OBD device is being resetting.
             Thread.sleep(500);
 
-            queueTask(new ObdCommandTask(new ObdCommandAdapter(new EchoOffCommand())));
-            queueTask(new ObdCommandTask(new ObdCommandAdapter(new LineFeedOffCommand())));
-            queueTask(new ObdCommandTask(new ObdCommandAdapter(new TimeoutCommand(62))));
+            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new EchoOffCommand())));
+            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new LineFeedOffCommand())));
+            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new TimeoutCommand(62))));
 
             // TODO: use protocol defined on settings
-            queueTask(new ObdCommandTask(new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO))));
+            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO))));
         } catch (InterruptedException e) {
             Log.e(TAG, "obdSetup: An error occurred (InterruptedException)", e);
             throw new IOException();
@@ -126,7 +154,8 @@ public class ObdGatewayService extends AbstractGatewayService {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "executeTask: IOException", e);
-                task.setState(e.getMessage().contains("Broken pipe") ? CommandTask.CommandTaskState.BROKEN_PIPE : CommandTask.CommandTaskState.EXECUTION_ERROR);
+                task.setState(e.getMessage().contains("Broken pipe") ?
+                        CommandTask.CommandTaskState.BROKEN_PIPE : CommandTask.CommandTaskState.EXECUTION_ERROR);
             } catch (Exception e) {
                 Log.e(TAG, "executeTask: Some error occurred", e);
                 if (task != null) {
@@ -134,17 +163,16 @@ public class ObdGatewayService extends AbstractGatewayService {
                 }
             }
 
-            /*
             if (task != null) {
                 final CommandTask returnedTask = task;
-                ((BluetoothActivity) context).runOnUiThread(new Runnable() {
+                context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         // Update GUI with changed data
+                        context.updateState(returnedTask);
                     }
                 });
             }
-            */
         }
     }
 }

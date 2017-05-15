@@ -39,7 +39,7 @@ public class ObdAsyncTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         Log.i(TAG, "ObdTask - onPreExecute...");
-        tvResults = (TextView) context.findViewById(R.id.tvResults);
+        tvResults = (TextView) context.findViewById(R.id.tv_results);
         tvResults.setText(context.getString(R.string.loading));
 
         // Creating socket

@@ -1,7 +1,6 @@
 package br.ufrn.imd.vdc.io;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
@@ -18,24 +17,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 public abstract class AbstractGatewayService extends Service {
     private static final String TAG = AbstractGatewayService.class.getName();
     private final IBinder binder = new AbstractGatewayServiceBinder();
-    protected Context context;
-    protected BlockingQueue<CommandTask> taskQueue;
-    protected Long queueCounter = 0L;
-    protected boolean isRunning;
-
-    Thread t = new Thread(new Runnable() {
+    private final Thread t = new Thread(new Runnable() {
         @Override
         public void run() {
-            // Template Method Implementation
+            // A Template Method to implement task runner
             executeTask();
         }
     });
-
-    AbstractGatewayService(Context context) {
-        super();
-        this.context = context;
-        this.taskQueue = new LinkedBlockingQueue<>();
-    }
+    protected TaskProgressListener context;
+    protected BlockingQueue<CommandTask> taskQueue = new LinkedBlockingQueue<>();
+    protected Long queueCounter = 0L;
+    protected boolean isRunning;
 
     @Override
     public void onCreate() {
@@ -58,17 +50,21 @@ public abstract class AbstractGatewayService extends Service {
         return this.binder;
     }
 
-    public void queueTask(CommandTask task) {
+    public void setContext(TaskProgressListener context) {
+        this.context = context;
+    }
+
+    public void enqueueTask(CommandTask task) {
         queueCounter++;
-        Log.d(TAG, "queueTask: Trying to add task[" + queueCounter + "] to queue..");
+        Log.d(TAG, "enqueueTask: Trying to add task[" + queueCounter + "] to queue..");
 
         task.setId(queueCounter);
         try {
             taskQueue.put(task);
-            Log.d(TAG, "queueTask: Task queued successfully.");
+            Log.d(TAG, "enqueueTask: Task queued successfully.");
         } catch (InterruptedException e) {
             task.setState(CommandTask.CommandTaskState.QUEUE_ERROR);
-            Log.e(TAG, "queueTask: Failed to queue task.");
+            Log.e(TAG, "enqueueTask: Failed to queue task.");
         }
     }
 
