@@ -26,6 +26,8 @@ import br.ufrn.imd.vdc.io.TaskProgressListener;
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
 
+    Button btnStartService;
+    Button btnStopService;
     private boolean isServiceBound;
     private boolean preRequisites = true;
     private AbstractGatewayService service;
@@ -41,6 +43,8 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
                 service.startService();
                 if (preRequisites) {
                     Log.d(TAG, "onServiceConnected: Bluetooth device is connected");
+                    btnStartService.setEnabled(false);
+                    btnStopService.setEnabled(true);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "onServiceConnected: startService() failed", e);
@@ -65,20 +69,21 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     }
 
     private void setup() {
-        Button btnStartService = (Button) findViewById(R.id.btn_start_service);
-        Button btnStopService = (Button) findViewById(R.id.btn_stop_service);
+        btnStartService = (Button) findViewById(R.id.btn_start_service);
+        btnStopService = (Button) findViewById(R.id.btn_stop_service);
         btnStartService.setOnClickListener(this);
         btnStopService.setOnClickListener(this);
+        btnStopService.setEnabled(false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        resetActionBarSubtitle();
+        setActionBarSubtitle(getString(R.string.disconnected));
     }
 
-    private void resetActionBarSubtitle() {
+    private void setActionBarSubtitle(String subtitle) {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setSubtitle("Disconnected");
+            actionBar.setSubtitle(subtitle);
         }
     }
 
@@ -130,6 +135,7 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     protected void doBindService() {
         if (!isServiceBound) {
             Log.d(TAG, "doBindService: Binding service");
+            setActionBarSubtitle(getString(R.string.connecting));
             if (preRequisites) {
                 Log.d(TAG, "doBindService: Creating Service");
                 Intent intentService = new Intent(MainActivity.this, ObdGatewayService.class);
@@ -154,7 +160,9 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
             unbindService(serviceConnection);
             isServiceBound = false;
             Log.d(TAG, "doUnbindService: Service Disconnected");
-            resetActionBarSubtitle();
+            setActionBarSubtitle(getString(R.string.disconnected));
+            btnStartService.setEnabled(true);
+            btnStopService.setEnabled(false);
         }
     }
 }
