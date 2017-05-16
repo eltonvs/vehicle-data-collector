@@ -1,11 +1,7 @@
 package br.ufrn.imd.vdc.activities;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,50 +11,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.IOException;
-
 import br.ufrn.imd.vdc.R;
-import br.ufrn.imd.vdc.io.AbstractGatewayService;
 import br.ufrn.imd.vdc.io.CommandTask;
-import br.ufrn.imd.vdc.io.ObdGatewayService;
+import br.ufrn.imd.vdc.io.ObdServiceManager;
 import br.ufrn.imd.vdc.io.TaskProgressListener;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
 
+    ObdServiceManager serviceManager = new ObdServiceManager(this);
     Button btnStartService;
     Button btnStopService;
-    private boolean isServiceBound;
-    private boolean preRequisites = true;
-    private AbstractGatewayService service;
-    private final ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(TAG, "onServiceConnected: Service is bound");
-            isServiceBound = true;
-            service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder).getService();
-            service.setContext(MainActivity.this);
-            try {
-                Log.d(TAG, "onServiceConnected: Starting Service");
-                service.startService();
-                if (preRequisites) {
-                    Log.d(TAG, "onServiceConnected: Bluetooth device is connected");
-                    btnStartService.setEnabled(false);
-                    btnStopService.setEnabled(true);
-                }
-            } catch (IOException e) {
-                Log.e(TAG, "onServiceConnected: startService() failed", e);
-                Log.e(TAG, "onServiceConnected: Service failed to start");
-                doUnbindService();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected: Service is unbound");
-            isServiceBound = false;
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +36,10 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
         btnStopService = (Button) findViewById(R.id.btn_stop_service);
         btnStartService.setOnClickListener(this);
         btnStopService.setOnClickListener(this);
-        btnStopService.setEnabled(false);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setActionBarSubtitle(getString(R.string.disconnected));
+        updateState(ObdServiceManager.Status.DISCONNECTED);
     }
 
     private void setActionBarSubtitle(String subtitle) {
@@ -114,11 +76,11 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
         switch (v.getId()) {
             case R.id.btn_start_service:
                 Log.d(TAG, "onClick: Calling doBindService()");
-                doBindService();
+                serviceManager.doBindService();
                 break;
             case R.id.btn_stop_service:
                 Log.d(TAG, "onClick: Calling doUnbindService()");
-                doUnbindService();
+                serviceManager.doUnbindService();
                 break;
             default:
                 break;
@@ -132,37 +94,30 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     }
 
     @Override
-    protected void doBindService() {
-        if (!isServiceBound) {
-            Log.d(TAG, "doBindService: Binding service");
-            setActionBarSubtitle(getString(R.string.connecting));
-            if (preRequisites) {
-                Log.d(TAG, "doBindService: Creating Service");
-                Intent intentService = new Intent(MainActivity.this, ObdGatewayService.class);
-                if (bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE)) {
-                    Log.d(TAG, "doBindService: Service is bound");
-                } else {
-                    Log.e(TAG, "doBindService: Error binding service");
-                }
-            } else {
-                Log.e(TAG, "doBindService: Error Creating Service");
-            }
-        }
-    }
-
-    @Override
-    protected void doUnbindService() {
-        if (isServiceBound) {
-            if (service.isRunning()) {
-                service.stopService();
-            }
-            Log.d(TAG, "doUnbindService: Unbinding service");
-            unbindService(serviceConnection);
-            isServiceBound = false;
-            Log.d(TAG, "doUnbindService: Service Disconnected");
-            setActionBarSubtitle(getString(R.string.disconnected));
-            btnStartService.setEnabled(true);
-            btnStopService.setEnabled(false);
+    public void updateState(ObdServiceManager.Status status) {
+        switch (status) {
+            case CONNECTED:
+                btnStartService.setEnabled(false);
+                btnStopService.setEnabled(true);
+                break;
+            case DISCONNECTED:
+                setActionBarSubtitle(getString(R.string.disconnected));
+                btnStartService.setEnabled(true);
+                btnStopService.setEnabled(false);
+                break;
+            case CONNECTING:
+                setActionBarSubtitle(getString(R.string.connecting));
+                btnStartService.setEnabled(false);
+                btnStopService.setEnabled(false);
+                break;
+            case DISCONNECTING:
+                setActionBarSubtitle(getString(R.string.disconnecting));
+                btnStartService.setEnabled(false);
+                btnStopService.setEnabled(false);
+                break;
+            default:
+                Log.d(TAG, "updateState: Unhandled option");
+                break;
         }
     }
 }
