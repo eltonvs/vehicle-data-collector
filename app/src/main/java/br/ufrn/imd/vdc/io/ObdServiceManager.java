@@ -91,6 +91,16 @@ public class ObdServiceManager {
         }
     }
 
+    public void enqueueDefaultCommands() {
+        if (currentState == Status.CONNECTED) {
+            Log.d(TAG, "enqueueDefaultCommands: Enqueuing Commands");
+            for (ICommand cmd : ObdCommandList.getInstance().getCommands())
+                service.enqueueTask(new ObdCommandTask(cmd));
+        } else {
+            Log.e(TAG, "enqueueDefaultCommands: Service isn't connected");
+        }
+    }
+
     private void setCurrentState(Status state) {
         Log.d(TAG, "setCurrentState: Updating State...");
         currentState = state;
