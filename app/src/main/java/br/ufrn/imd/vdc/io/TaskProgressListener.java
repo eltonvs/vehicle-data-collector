@@ -9,7 +9,5 @@ import android.support.v7.app.AppCompatActivity;
 public abstract class TaskProgressListener extends AppCompatActivity {
     public abstract void updateState(final CommandTask task);
 
-    protected abstract void doBindService();
-
-    protected abstract void doUnbindService();
+    public abstract void updateState(ObdServiceManager.Status status);
 }
