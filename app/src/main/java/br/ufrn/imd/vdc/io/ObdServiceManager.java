@@ -23,7 +23,7 @@ public class ObdServiceManager {
     private final ServiceConnection serviceConnection;
     private TaskProgressListener context;
     private AbstractGatewayService service;
-    private Status currentState;
+    private volatile Status currentState;
 
     public ObdServiceManager(final TaskProgressListener context) {
         this.context = context;
