@@ -12,14 +12,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import br.ufrn.imd.vdc.R;
-import br.ufrn.imd.vdc.io.CommandTask;
-import br.ufrn.imd.vdc.io.ObdServiceManager;
-import br.ufrn.imd.vdc.io.TaskProgressListener;
+import br.ufrn.imd.vdc.helpers.ObdServiceManager;
+import br.ufrn.imd.vdc.services.tasks.CommandTask;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
 
-    ObdServiceManager serviceManager = new ObdServiceManager(this);
+    final ObdServiceManager serviceManager = new ObdServiceManager(this);
     Button btnStartService;
     Button btnStopService;
     Button btnEnqueueCommands;

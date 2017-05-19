@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.services.tasks;
 
 /**
  * Created by elton on 12/05/17.
@@ -7,7 +7,7 @@ package br.ufrn.imd.vdc.io;
 public abstract class CommandTask {
     private final ICommand command;
     private Long id;
-    private CommandTaskState state;
+    private volatile CommandTaskState state;
 
     public CommandTask(ICommand command) {
         this.command = command;

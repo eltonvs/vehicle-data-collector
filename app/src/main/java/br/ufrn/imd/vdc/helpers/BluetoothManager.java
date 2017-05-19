@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.helpers;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;

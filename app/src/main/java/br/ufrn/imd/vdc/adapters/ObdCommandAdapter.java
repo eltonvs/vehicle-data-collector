@@ -1,10 +1,12 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.adapters;
 
 import com.github.pires.obd.commands.ObdCommand;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import br.ufrn.imd.vdc.services.tasks.ICommand;
 
 /**
  * Created by elton on 12/05/17.

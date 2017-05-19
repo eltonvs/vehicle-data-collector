@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.services;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -19,6 +19,10 @@ import com.github.pires.obd.exceptions.UnsupportedCommandException;
 import java.io.IOException;
 
 import br.ufrn.imd.vdc.activities.SettingsActivity;
+import br.ufrn.imd.vdc.adapters.ObdCommandAdapter;
+import br.ufrn.imd.vdc.helpers.BluetoothManager;
+import br.ufrn.imd.vdc.services.tasks.CommandTask;
+import br.ufrn.imd.vdc.services.tasks.ObdCommandTask;
 
 public class ObdGatewayService extends AbstractGatewayService {
     private static final String TAG = ObdGatewayService.class.getName();
@@ -137,6 +141,7 @@ public class ObdGatewayService extends AbstractGatewayService {
                     task.setState(CommandTask.CommandTaskState.RUNNING);
                     if (btSocket.isConnected()) {
                         task.getCommand().run(btSocket.getInputStream(), btSocket.getOutputStream());
+                        task.setState(CommandTask.CommandTaskState.FINISHED);
                     } else {
                         task.setState(CommandTask.CommandTaskState.EXECUTION_ERROR);
                         Log.e(TAG, "executeTask: Can't run command on a closed socket.");
@@ -163,7 +168,7 @@ public class ObdGatewayService extends AbstractGatewayService {
                 }
             }
 
-            if (task != null) {
+            if (task != null && task.getState().equals(CommandTask.CommandTaskState.FINISHED)) {
                 final CommandTask returnedTask = task;
                 context.runOnUiThread(new Runnable() {
                     @Override

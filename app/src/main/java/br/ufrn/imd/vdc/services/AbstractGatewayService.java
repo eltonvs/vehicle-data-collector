@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.services;
 
 import android.app.Service;
 import android.content.Intent;
@@ -9,6 +9,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import br.ufrn.imd.vdc.services.tasks.CommandTask;
+import br.ufrn.imd.vdc.activities.TaskProgressListener;
 
 /**
  * Created by elton on 12/05/17.
@@ -25,7 +28,7 @@ public abstract class AbstractGatewayService extends Service {
         }
     });
     protected TaskProgressListener context;
-    protected BlockingQueue<CommandTask> taskQueue = new LinkedBlockingQueue<>();
+    protected final BlockingQueue<CommandTask> taskQueue = new LinkedBlockingQueue<>();
     protected Long queueCounter = 0L;
     protected boolean isRunning;
 

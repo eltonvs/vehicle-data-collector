@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.helpers;
 
 
 import com.github.pires.obd.commands.SpeedCommand;
@@ -32,6 +32,9 @@ import com.github.pires.obd.enums.FuelTrim;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import br.ufrn.imd.vdc.adapters.ObdCommandAdapter;
+import br.ufrn.imd.vdc.services.tasks.ICommand;
 
 public class ObdCommandList {
     private static final ObdCommandList instance = new ObdCommandList();
@@ -73,7 +76,7 @@ public class ObdCommandList {
         commands.add(new ObdCommandAdapter(new FindFuelTypeCommand()));
         commands.add(new ObdCommandAdapter(new ConsumptionRateCommand()));
         // commands.add(new ObdCommandAdapter(new AverageFuelEconomyObdCommand()));
-        //commands.add(new ObdCommandAdapter(new FuelEconomyCommand()));
+        // commands.add(new ObdCommandAdapter(new FuelEconomyCommand()));
         commands.add(new ObdCommandAdapter(new FuelLevelCommand()));
         // commands.add(new ObdCommandAdapter(new FuelEconomyMAPObdCommand()));
         // commands.add(new ObdCommandAdapter(new FuelEconomyCommandedMAPObdCommand()));

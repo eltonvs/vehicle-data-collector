@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.services.tasks;
 
 import java.io.IOException;
 import java.io.InputStream;

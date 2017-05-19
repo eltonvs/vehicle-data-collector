@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.helpers;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
@@ -13,6 +13,11 @@ import android.util.Log;
 import java.io.IOException;
 
 import br.ufrn.imd.vdc.activities.SettingsActivity;
+import br.ufrn.imd.vdc.services.AbstractGatewayService;
+import br.ufrn.imd.vdc.services.ObdGatewayService;
+import br.ufrn.imd.vdc.services.tasks.ICommand;
+import br.ufrn.imd.vdc.services.tasks.ObdCommandTask;
+import br.ufrn.imd.vdc.activities.TaskProgressListener;
 
 /**
  * Created by elton on 5/15/17.
@@ -21,7 +26,7 @@ import br.ufrn.imd.vdc.activities.SettingsActivity;
 public class ObdServiceManager {
     private static final String TAG = ObdServiceManager.class.getName();
     private final ServiceConnection serviceConnection;
-    private TaskProgressListener context;
+    private final TaskProgressListener context;
     private AbstractGatewayService service;
     private volatile Status currentState;
 
