@@ -13,11 +13,12 @@ import android.util.Log;
 import java.io.IOException;
 
 import br.ufrn.imd.vdc.activities.SettingsActivity;
+import br.ufrn.imd.vdc.activities.TaskProgressListener;
+import br.ufrn.imd.vdc.obd.ObdCommandList;
+import br.ufrn.imd.vdc.obd.ObdCommandTask;
 import br.ufrn.imd.vdc.services.AbstractGatewayService;
 import br.ufrn.imd.vdc.services.ObdGatewayService;
 import br.ufrn.imd.vdc.services.tasks.ICommand;
-import br.ufrn.imd.vdc.services.tasks.ObdCommandTask;
-import br.ufrn.imd.vdc.activities.TaskProgressListener;
 
 /**
  * Created by elton on 5/15/17.
@@ -38,7 +39,8 @@ public class ObdServiceManager {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.d(TAG, "onServiceConnected: Service is bound");
                 if (verifyPreRequisites()) {
-                    service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder).getService();
+                    service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder)
+                            .getService();
                     service.setContext(context);
                     try {
                         Log.d(TAG, "onServiceConnected: Trying to start Service");
@@ -63,55 +65,6 @@ public class ObdServiceManager {
         };
     }
 
-    public void doBindService() {
-        if (currentState != Status.CONNECTED) {
-            Log.d(TAG, "doBindService: Binding service");
-            setCurrentState(Status.CONNECTING);
-            if (verifyPreRequisites()) {
-                Log.d(TAG, "doBindService: Creating Service");
-                Intent intentService = new Intent(context, ObdGatewayService.class);
-                if (context.bindService(intentService, serviceConnection, Context.BIND_AUTO_CREATE)) {
-                    Log.d(TAG, "doBindService: Service is bound");
-                } else {
-                    Log.e(TAG, "doBindService: Error binding service");
-                    setCurrentState(Status.DISCONNECTED);
-                }
-            } else {
-                Log.e(TAG, "doBindService: Pre requisites not satisfied");
-                setCurrentState(Status.DISCONNECTED);
-            }
-        }
-    }
-
-    public void doUnbindService() {
-        if (currentState != Status.DISCONNECTED) {
-            setCurrentState(Status.DISCONNECTING);
-            if (service.isRunning()) {
-                service.stopService();
-            }
-            Log.d(TAG, "doUnbindService: Unbinding service");
-            context.unbindService(serviceConnection);
-            Log.d(TAG, "doUnbindService: Service Disconnected");
-            setCurrentState(Status.DISCONNECTED);
-        }
-    }
-
-    public void enqueueDefaultCommands() {
-        if (currentState == Status.CONNECTED) {
-            Log.d(TAG, "enqueueDefaultCommands: Enqueuing Commands");
-            for (ICommand cmd : ObdCommandList.getInstance().getCommands())
-                service.enqueueTask(new ObdCommandTask(cmd));
-        } else {
-            Log.e(TAG, "enqueueDefaultCommands: Service isn't connected");
-        }
-    }
-
-    private void setCurrentState(Status state) {
-        Log.d(TAG, "setCurrentState: Updating State...");
-        currentState = state;
-        context.updateState(state);
-    }
-
     private boolean verifyPreRequisites() {
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (btAdapter == null || !btAdapter.isEnabled()) {
@@ -127,6 +80,56 @@ public class ObdServiceManager {
         }
 
         return true;
+    }
+
+    private void setCurrentState(Status state) {
+        Log.d(TAG, "setCurrentState: Updating State...");
+        currentState = state;
+        context.updateState(state);
+    }
+
+    public void doUnbindService() {
+        if (currentState != Status.DISCONNECTED) {
+            setCurrentState(Status.DISCONNECTING);
+            if (service.isRunning()) {
+                service.stopService();
+            }
+            Log.d(TAG, "doUnbindService: Unbinding service");
+            context.unbindService(serviceConnection);
+            Log.d(TAG, "doUnbindService: Service Disconnected");
+            setCurrentState(Status.DISCONNECTED);
+        }
+    }
+
+    public void doBindService() {
+        if (currentState != Status.CONNECTED) {
+            Log.d(TAG, "doBindService: Binding service");
+            setCurrentState(Status.CONNECTING);
+            if (verifyPreRequisites()) {
+                Log.d(TAG, "doBindService: Creating Service");
+                Intent intentService = new Intent(context, ObdGatewayService.class);
+                if (context.bindService(intentService, serviceConnection,
+                        Context.BIND_AUTO_CREATE)) {
+                    Log.d(TAG, "doBindService: Service is bound");
+                } else {
+                    Log.e(TAG, "doBindService: Error binding service");
+                    setCurrentState(Status.DISCONNECTED);
+                }
+            } else {
+                Log.e(TAG, "doBindService: Pre requisites not satisfied");
+                setCurrentState(Status.DISCONNECTED);
+            }
+        }
+    }
+
+    public void enqueueDefaultCommands() {
+        if (currentState == Status.CONNECTED) {
+            Log.d(TAG, "enqueueDefaultCommands: Enqueuing Commands");
+            for (ICommand cmd : ObdCommandList.getInstance().getCommands())
+                service.enqueueTask(new ObdCommandTask(cmd));
+        } else {
+            Log.e(TAG, "enqueueDefaultCommands: Service isn't connected");
+        }
     }
 
     public enum Status {

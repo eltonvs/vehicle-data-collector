@@ -8,9 +8,6 @@ import java.io.Serializable;
 
 public class ObdReading implements Serializable {
 
-    public static String[] COLUNAS = new String[]{"ID", "VEHICLE_ID", "LATITUDE", "LONGITUDE", "ALTITUDE",
-            "TIMESTAMP", "READINGS"};
-
     private int id;
     private String vehicleId;
 
@@ -25,8 +22,8 @@ public class ObdReading implements Serializable {
 
     }
 
-    public ObdReading(double latitude, double longitude, double altitude, long timestamp,
-                      String vehicleid, String readings) {
+    public ObdReading(double latitude, double longitude, double altitude, long timestamp, String
+            vehicleid, String readings) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
@@ -93,11 +90,8 @@ public class ObdReading implements Serializable {
 
     public String toString() {
 
-        return "lat:" + latitude + ";" +
-                "long:" + longitude + ";" +
-                "alt:" + altitude + ";" +
-                "vehicleid:" + vehicleId + ";" +
-                "readings: " + readings;
+        return "lat:" + latitude + ";" + "long:" + longitude + ";" + "alt:" + altitude + ";" +
+                "vehicleid:" + vehicleId + ";" + "readings: " + readings;
     }
 }
 

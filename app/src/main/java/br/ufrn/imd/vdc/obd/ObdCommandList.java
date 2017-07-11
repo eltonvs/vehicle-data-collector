@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.helpers;
+package br.ufrn.imd.vdc.obd;
 
 
 import com.github.pires.obd.commands.SpeedCommand;
@@ -33,7 +33,6 @@ import com.github.pires.obd.enums.FuelTrim;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ufrn.imd.vdc.adapters.ObdCommandAdapter;
 import br.ufrn.imd.vdc.services.tasks.ICommand;
 
 public class ObdCommandList {
@@ -42,14 +41,6 @@ public class ObdCommandList {
 
     private ObdCommandList() {
         fillCommandsList();
-    }
-
-    public static ObdCommandList getInstance() {
-        return instance;
-    }
-
-    public List<ICommand> getCommands() {
-        return commands;
     }
 
     private void fillCommandsList() {
@@ -101,5 +92,13 @@ public class ObdCommandList {
 
         // Misc
         commands.add(new ObdCommandAdapter(new SpeedCommand()));
+    }
+
+    public static ObdCommandList getInstance() {
+        return instance;
+    }
+
+    public List<ICommand> getCommands() {
+        return commands;
     }
 }

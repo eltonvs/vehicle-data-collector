@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import br.ufrn.imd.vdc.services.tasks.CommandTask;
 import br.ufrn.imd.vdc.activities.TaskProgressListener;
+import br.ufrn.imd.vdc.obd.CommandTask;
 
 /**
  * Created by elton on 12/05/17.
@@ -19,6 +19,7 @@ import br.ufrn.imd.vdc.activities.TaskProgressListener;
 
 public abstract class AbstractGatewayService extends Service {
     private static final String TAG = AbstractGatewayService.class.getName();
+    protected final BlockingQueue<CommandTask> taskQueue = new LinkedBlockingQueue<>();
     private final IBinder binder = new AbstractGatewayServiceBinder();
     private final Thread t = new Thread(new Runnable() {
         @Override
@@ -28,7 +29,6 @@ public abstract class AbstractGatewayService extends Service {
         }
     });
     protected TaskProgressListener context;
-    protected final BlockingQueue<CommandTask> taskQueue = new LinkedBlockingQueue<>();
     protected Long queueCounter = 0L;
     protected boolean isRunning;
 

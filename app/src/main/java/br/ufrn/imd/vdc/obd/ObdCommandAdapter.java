@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.adapters;
+package br.ufrn.imd.vdc.obd;
 
 import com.github.pires.obd.commands.ObdCommand;
 

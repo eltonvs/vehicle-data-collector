@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import br.ufrn.imd.vdc.R;
 import br.ufrn.imd.vdc.helpers.ObdServiceManager;
-import br.ufrn.imd.vdc.services.tasks.CommandTask;
+import br.ufrn.imd.vdc.obd.CommandTask;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
@@ -66,13 +66,10 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                this.startActivity(intent);
-                return true;
-            default:
-                break;
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            this.startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -110,7 +107,9 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     @Override
     public void updateState(CommandTask task) {
         TextView tvResultsLog = (TextView) findViewById(R.id.tv_results);
-        tvResultsLog.setText(tvResultsLog.getText() + task.getCommand().getName() + " = " + task.getCommand().getFormattedResult() + "\n");
+        tvResultsLog.setText(
+                tvResultsLog.getText() + task.getCommand().getName() + " = " + task.getCommand()
+                        .getFormattedResult() + "\n");
     }
 
     @Override
