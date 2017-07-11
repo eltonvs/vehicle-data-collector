@@ -1,6 +1,9 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.activities;
 
 import android.support.v7.app.AppCompatActivity;
+
+import br.ufrn.imd.vdc.helpers.ObdServiceManager;
+import br.ufrn.imd.vdc.obd.CommandTask;
 
 /**
  * Created by elton on 15/05/17.

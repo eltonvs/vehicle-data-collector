@@ -57,7 +57,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
      */
-    private static final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener
+            sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -69,10 +70,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 int index = listPreference.findIndexOfValue(stringValue);
 
                 // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
+                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.
@@ -81,15 +79,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return true;
         }
     };
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
 
     /**
      * Binds a preference's summary to its value. More specifically, when the
@@ -107,9 +96,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // Trigger the listener immediately with the preference's
         // current value.
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(
+                        preference.getKey(), ""));
     }
 
     @Override
@@ -138,6 +126,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
+     * Helper method to determine if the device has an extra-large screen. For
+     * example, 10" tablets are extra-large.
+     */
+    private static boolean isXLargeTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration
+                .SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -151,11 +148,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * Make sure to deny any unknown fragments here.
      */
     protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || DataSyncPreferenceFragment.class.getName().equals(fragmentName)
-                || BluetoothPreferenceFragment.class.getName().equals(fragmentName)
-                || GPSPreferenceFragment.class.getName().equals(fragmentName)
-                || OBDPreferenceFragment.class.getName().equals(fragmentName);
+        return PreferenceFragment.class.getName().equals(
+                fragmentName) || DataSyncPreferenceFragment.class.getName().equals(
+                fragmentName) || BluetoothPreferenceFragment.class.getName().equals(
+                fragmentName) || GPSPreferenceFragment.class.getName().equals(
+                fragmentName) || OBDPreferenceFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -193,20 +190,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             vehicleID = (EditTextPreference) findPreference(DATA_SYNC_VEHICLE_ID);
             syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
 
-            dataSyncSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean val = !((SwitchPreference) preference).isChecked();
+            dataSyncSwitch.setOnPreferenceChangeListener(
+                    new Preference.OnPreferenceChangeListener() {
+                        @Override
+                        public boolean onPreferenceChange(Preference preference, Object newValue) {
+                            boolean val = !((SwitchPreference) preference).isChecked();
 
-                    if (val) {
-                        turnOnDataSync();
-                    } else {
-                        turnOffDataSync();
-                    }
+                            if (val) {
+                                turnOnDataSync();
+                            } else {
+                                turnOffDataSync();
+                            }
 
-                    return true;
-                }
-            });
+                            return true;
+                        }
+                    });
 
             bindPreferenceSummaryToValue(uploadURL);
             bindPreferenceSummaryToValue(vehicleID);
@@ -380,15 +378,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void turnOnGPS() {
-            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)",
+                    Toast.LENGTH_SHORT).show();
         }
 
         private void turnOffGPS() {
-            Toast.makeText(getActivity(), "Turning GPS off... (not working yet)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Turning GPS off... (not working yet)",
+                    Toast.LENGTH_SHORT).show();
         }
 
         private boolean isGPSEnabled() {
-            return locationManager != null && locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            return locationManager != null && locationManager.isProviderEnabled(
+                    LocationManager.GPS_PROVIDER);
         }
 
         @Override

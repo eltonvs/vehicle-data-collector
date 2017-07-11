@@ -40,8 +40,6 @@ public class Person implements Serializable {
 
     public String toString() {
 
-        return "id:" + id + ";" +
-                "name:" + name + ";" +
-                "password:" + password + ";";
+        return "id:" + id + ";" + "name:" + name + ";" + "password:" + password + ";";
     }
 }

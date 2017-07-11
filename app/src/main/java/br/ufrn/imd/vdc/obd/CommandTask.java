@@ -1,15 +1,15 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.obd;
 
 /**
  * Created by elton on 12/05/17.
  */
 
 public abstract class CommandTask {
-    private final ICommand command;
+    private final br.ufrn.imd.vdc.services.tasks.ICommand command;
     private Long id;
-    private CommandTaskState state;
+    private volatile CommandTaskState state;
 
-    public CommandTask(ICommand command) {
+    public CommandTask(br.ufrn.imd.vdc.services.tasks.ICommand command) {
         this.command = command;
         this.state = CommandTaskState.NEW;
     }
@@ -22,7 +22,7 @@ public abstract class CommandTask {
         this.id = id;
     }
 
-    public ICommand getCommand() {
+    public br.ufrn.imd.vdc.services.tasks.ICommand getCommand() {
         return command;
     }
 

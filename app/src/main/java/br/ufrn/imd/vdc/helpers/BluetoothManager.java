@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.helpers;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -21,10 +21,15 @@ public class BluetoothManager {
      */
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
+    private BluetoothManager() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Instantiates a BluetoothSocket for the remote device and connects it.
      * <p/>
-     * See http://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might-closed-bluetooth-on-android-4-3/18786701#18786701
+     * See http://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might
+     * -closed-bluetooth-on-android-4-3/18786701#18786701
      *
      * @param dev The remote device to connect to
      * @return The BluetoothSocket
@@ -38,7 +43,8 @@ public class BluetoothManager {
             sock = dev.createRfcommSocketToServiceRecord(MY_UUID);
             sock.connect();
         } catch (IOException e) {
-            Log.e(TAG, "There was an error while establishing Bluetooth connection. Falling back..", e);
+            Log.e(TAG, "There was an error while establishing Bluetooth connection. Falling back..",
+                    e);
             fallbackConnect(sock);
         }
         return sock;
@@ -51,7 +57,8 @@ public class BluetoothManager {
         try {
             Method m = clazz.getMethod("createRfcommSocket", paramTypes);
             Object[] params = new Object[]{Integer.valueOf(1)};
-            BluetoothSocket sockFallback = (BluetoothSocket) m.invoke(sock.getRemoteDevice(), params);
+            BluetoothSocket sockFallback = (BluetoothSocket) m.invoke(sock.getRemoteDevice(),
+                    params);
             sockFallback.connect();
         } catch (Exception e2) {
             Log.e(TAG, "Couldn't fallback while establishing Bluetooth connection.", e2);

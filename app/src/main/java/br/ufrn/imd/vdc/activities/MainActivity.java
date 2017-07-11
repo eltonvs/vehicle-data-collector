@@ -12,16 +12,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import br.ufrn.imd.vdc.R;
-import br.ufrn.imd.vdc.io.CommandTask;
-import br.ufrn.imd.vdc.io.ObdServiceManager;
-import br.ufrn.imd.vdc.io.TaskProgressListener;
+import br.ufrn.imd.vdc.helpers.ObdServiceManager;
+import br.ufrn.imd.vdc.obd.CommandTask;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
 
-    ObdServiceManager serviceManager = new ObdServiceManager(this);
+    final ObdServiceManager serviceManager = new ObdServiceManager(this);
     Button btnStartService;
     Button btnStopService;
+    Button btnEnqueueCommands;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +34,15 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     private void setup() {
         btnStartService = (Button) findViewById(R.id.btn_start_service);
         btnStopService = (Button) findViewById(R.id.btn_stop_service);
+        btnEnqueueCommands = (Button) findViewById(R.id.btn_enqueue_commands);
+
         btnStartService.setOnClickListener(this);
+        btnEnqueueCommands.setOnClickListener(this);
         btnStopService.setOnClickListener(this);
+
+        // Clear log button
+        Button btnClearLog = (Button) findViewById(R.id.btn_clear_log);
+        btnClearLog.setOnClickListener(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,13 +66,10 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id) {
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                this.startActivity(intent);
-                return true;
-            default:
-                break;
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            this.startActivity(intent);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -82,15 +86,30 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
                 Log.d(TAG, "onClick: Calling doUnbindService()");
                 serviceManager.doUnbindService();
                 break;
+            case R.id.btn_enqueue_commands:
+                Log.d(TAG, "onClick: Enqueuing commands");
+                serviceManager.enqueueDefaultCommands();
+                break;
+            case R.id.btn_clear_log:
+                Log.d(TAG, "onClick: Clearing OBD Commands Log");
+                clearObdLog();
+                break;
             default:
                 break;
         }
     }
 
+    private void clearObdLog() {
+        TextView tvResultsLog = (TextView) findViewById(R.id.tv_results);
+        tvResultsLog.setText("");
+    }
+
     @Override
     public void updateState(CommandTask task) {
-        TextView tvResults = (TextView) findViewById(R.id.tv_results);
-        tvResults.setText(tvResults.getText() + task.getCommand().getName() + " = " + task.getCommand().getFormattedResult() + "\n");
+        TextView tvResultsLog = (TextView) findViewById(R.id.tv_results);
+        tvResultsLog.setText(
+                tvResultsLog.getText() + task.getCommand().getName() + " = " + task.getCommand()
+                        .getFormattedResult() + "\n");
     }
 
     @Override
@@ -99,21 +118,25 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
             case CONNECTED:
                 btnStartService.setEnabled(false);
                 btnStopService.setEnabled(true);
+                btnEnqueueCommands.setEnabled(true);
                 break;
             case DISCONNECTED:
                 setActionBarSubtitle(getString(R.string.disconnected));
                 btnStartService.setEnabled(true);
                 btnStopService.setEnabled(false);
+                btnEnqueueCommands.setEnabled(false);
                 break;
             case CONNECTING:
                 setActionBarSubtitle(getString(R.string.connecting));
                 btnStartService.setEnabled(false);
                 btnStopService.setEnabled(false);
+                btnEnqueueCommands.setEnabled(false);
                 break;
             case DISCONNECTING:
                 setActionBarSubtitle(getString(R.string.disconnecting));
                 btnStartService.setEnabled(false);
                 btnStopService.setEnabled(false);
+                btnEnqueueCommands.setEnabled(false);
                 break;
             default:
                 Log.d(TAG, "updateState: Unhandled option");

@@ -1,4 +1,4 @@
-package br.ufrn.imd.vdc.io;
+package br.ufrn.imd.vdc.obd;
 
 
 import com.github.pires.obd.commands.SpeedCommand;
@@ -33,20 +33,14 @@ import com.github.pires.obd.enums.FuelTrim;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufrn.imd.vdc.services.tasks.ICommand;
+
 public class ObdCommandList {
     private static final ObdCommandList instance = new ObdCommandList();
     private List<ICommand> commands;
 
     private ObdCommandList() {
         fillCommandsList();
-    }
-
-    public static ObdCommandList getInstance() {
-        return instance;
-    }
-
-    public List<ICommand> getCommands() {
-        return commands;
     }
 
     private void fillCommandsList() {
@@ -73,7 +67,7 @@ public class ObdCommandList {
         commands.add(new ObdCommandAdapter(new FindFuelTypeCommand()));
         commands.add(new ObdCommandAdapter(new ConsumptionRateCommand()));
         // commands.add(new ObdCommandAdapter(new AverageFuelEconomyObdCommand()));
-        //commands.add(new ObdCommandAdapter(new FuelEconomyCommand()));
+        // commands.add(new ObdCommandAdapter(new FuelEconomyCommand()));
         commands.add(new ObdCommandAdapter(new FuelLevelCommand()));
         // commands.add(new ObdCommandAdapter(new FuelEconomyMAPObdCommand()));
         // commands.add(new ObdCommandAdapter(new FuelEconomyCommandedMAPObdCommand()));
@@ -98,5 +92,13 @@ public class ObdCommandList {
 
         // Misc
         commands.add(new ObdCommandAdapter(new SpeedCommand()));
+    }
+
+    public static ObdCommandList getInstance() {
+        return instance;
+    }
+
+    public List<ICommand> getCommands() {
+        return commands;
     }
 }

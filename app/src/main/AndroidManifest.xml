@@ -39,7 +39,7 @@
                 android:value="br.ufrn.imd.vdc.activities.MainActivity" />
         </activity>
 
-        <service android:name=".io.ObdGatewayService" />
+        <service android:name=".services.ObdGatewayService" />
     </application>
 
 </manifest>
