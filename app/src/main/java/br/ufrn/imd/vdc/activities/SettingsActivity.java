@@ -58,7 +58,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * to reflect its new value.
      */
     private static final Preference.OnPreferenceChangeListener
-            sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+        sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -95,9 +95,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         // Trigger the listener immediately with the preference's
         // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(
-                        preference.getKey(), ""));
+        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
+            .getDefaultSharedPreferences(preference.getContext())
+            .getString(preference.getKey(), ""));
+    }
+
+    /**
+     * Helper method to determine if the device has an extra-large screen. For
+     * example, 10" tablets are extra-large.
+     */
+    private static boolean isXLargeTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration
+            .SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
     }
 
     @Override
@@ -126,15 +135,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout & Configuration
-                .SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -148,11 +148,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      * Make sure to deny any unknown fragments here.
      */
     protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(
-                fragmentName) || DataSyncPreferenceFragment.class.getName().equals(
-                fragmentName) || BluetoothPreferenceFragment.class.getName().equals(
-                fragmentName) || GPSPreferenceFragment.class.getName().equals(
-                fragmentName) || OBDPreferenceFragment.class.getName().equals(fragmentName);
+        return fragmentName.equals(PreferenceFragment.class.getName()) ||
+               fragmentName.equals(DataSyncPreferenceFragment.class.getName()) ||
+               fragmentName.equals(BluetoothPreferenceFragment.class.getName()) ||
+               fragmentName.equals(GPSPreferenceFragment.class.getName()) ||
+               fragmentName.equals(OBDPreferenceFragment.class.getName());
     }
 
     /**
@@ -191,20 +191,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
 
             dataSyncSwitch.setOnPreferenceChangeListener(
-                    new Preference.OnPreferenceChangeListener() {
-                        @Override
-                        public boolean onPreferenceChange(Preference preference, Object newValue) {
-                            boolean val = !((SwitchPreference) preference).isChecked();
+                new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        boolean val = !((SwitchPreference) preference).isChecked();
 
-                            if (val) {
-                                turnOnDataSync();
-                            } else {
-                                turnOffDataSync();
-                            }
-
-                            return true;
+                        if (val) {
+                            turnOnDataSync();
+                        } else {
+                            turnOffDataSync();
                         }
-                    });
+
+                        return true;
+                    }
+                });
 
             bindPreferenceSummaryToValue(uploadURL);
             bindPreferenceSummaryToValue(vehicleID);
@@ -212,15 +212,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         /**
-         * TODO
+         * TODO: Create Data Sync module (turn on)
          */
         private void turnOnDataSync() {
+            throw new UnsupportedOperationException();
         }
 
         /**
-         * TODO
+         * TODO: Create Data Sync Module (turn off)
          */
         private void turnOffDataSync() {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -241,7 +243,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class BluetoothPreferenceFragment extends PreferenceFragment {
         private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        private SwitchPreference btSwitch;
         private ListPreference btDevices;
 
         @Override
@@ -250,7 +251,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_bluetooth);
             setHasOptionsMenu(true);
 
-            btSwitch = (SwitchPreference) findPreference(BLUETOOTH_SWITCH);
+            SwitchPreference btSwitch = (SwitchPreference) findPreference(BLUETOOTH_SWITCH);
             btDevices = (ListPreference) findPreference(BLUETOOTH_DEVICES);
 
             if (btAdapter == null) {
@@ -258,8 +259,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 btSwitch.setChecked(false);
                 btSwitch.setEnabled(false);
                 btDevices.setEnabled(false);
-                Toast.makeText(getActivity(), "This device does not support Bluetooth.",
-                        Toast.LENGTH_LONG).show();
+                Toast
+                    .makeText(getActivity(), "This device does not support Bluetooth.", Toast
+                        .LENGTH_LONG)
+                    .show();
 
                 // Terminate
                 return;
@@ -351,8 +354,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // Bluetooth not available
                 gpsSwitch.setChecked(false);
                 gpsSwitch.setEnabled(false);
-                Toast.makeText(getActivity(), "This device does not support GPS.",
-                        Toast.LENGTH_LONG).show();
+                Toast
+                    .makeText(getActivity(), "This device does not support GPS.", Toast
+                        .LENGTH_LONG)
+                    .show();
 
                 // Terminate
                 return;
@@ -378,18 +383,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
 
         private void turnOnGPS() {
-            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)", Toast.LENGTH_SHORT)
+                .show();
         }
 
         private void turnOffGPS() {
-            Toast.makeText(getActivity(), "Turning GPS off... (not working yet)",
-                    Toast.LENGTH_SHORT).show();
+            Toast
+                .makeText(getActivity(), "Turning GPS off... (not working yet)", Toast
+                    .LENGTH_SHORT)
+                .show();
         }
 
         private boolean isGPSEnabled() {
-            return locationManager != null && locationManager.isProviderEnabled(
-                    LocationManager.GPS_PROVIDER);
+            return locationManager != null &&
+                   locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
         @Override
@@ -410,7 +417,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class OBDPreferenceFragment extends PreferenceFragment {
         private ListPreference obdProtocols;
-        private EditTextPreference engineDisplacement;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -419,11 +425,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             obdProtocols = (ListPreference) findPreference(OBD_PROTOCOL);
-            engineDisplacement = (EditTextPreference) findPreference(ENGINE_DISPLACEMENT);
-
             fillObdProtocols();
-
             bindPreferenceSummaryToValue(obdProtocols);
+
+            EditTextPreference engineDisplacement = (EditTextPreference) findPreference
+                (ENGINE_DISPLACEMENT);
             bindPreferenceSummaryToValue(engineDisplacement);
         }
 

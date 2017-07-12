@@ -44,7 +44,7 @@ public class ObdGatewayService extends AbstractGatewayService {
                     task.setState(CommandTask.CommandTaskState.RUNNING);
                     if (btSocket.isConnected()) {
                         task.getCommand().run(btSocket.getInputStream(),
-                                btSocket.getOutputStream());
+                            btSocket.getOutputStream());
                         task.setState(CommandTask.CommandTaskState.FINISHED);
                     } else {
                         task.setState(CommandTask.CommandTaskState.EXECUTION_ERROR);
@@ -64,8 +64,8 @@ public class ObdGatewayService extends AbstractGatewayService {
             } catch (IOException e) {
                 Log.e(TAG, "executeTask: IOException", e);
                 task.setState(e.getMessage().contains(
-                        "Broken pipe") ? CommandTask.CommandTaskState.BROKEN_PIPE : CommandTask
-                        .CommandTaskState.EXECUTION_ERROR);
+                    "Broken pipe") ? CommandTask.CommandTaskState.BROKEN_PIPE : CommandTask
+                                  .CommandTaskState.EXECUTION_ERROR);
             } catch (Exception e) {
                 Log.e(TAG, "executeTask: Some error occurred", e);
                 if (task != null) {
@@ -75,8 +75,8 @@ public class ObdGatewayService extends AbstractGatewayService {
 
             if (task != null) {
                 Log.d(TAG,
-                        "executeTask: task: " + task.getCommand().getName() + " | state: " + task
-                                .getState() + " | value: " + task.getCommand().getResult());
+                    "executeTask: task: " + task.getCommand().getName() + " | state: " + task
+                        .getState() + " | value: " + task.getCommand().getResult());
             }
 
             if (task != null && task.getState().equals(CommandTask.CommandTaskState.FINISHED)) {
@@ -141,7 +141,7 @@ public class ObdGatewayService extends AbstractGatewayService {
             btSocket = BluetoothManager.connect(device);
         } catch (IOException e) {
             Log.e(TAG, "startObdConnection: Error occurred when starting a bluetooth connection",
-                    e);
+                e);
             throw e;
         }
 
@@ -166,7 +166,7 @@ public class ObdGatewayService extends AbstractGatewayService {
 
             // TODO: use protocol defined on settings
             enqueueTask(new ObdCommandTask(
-                    new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO))));
+                new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO))));
         } catch (InterruptedException e) {
             Log.e(TAG, "obdSetup: An error occurred (InterruptedException)", e);
             Thread.currentThread().interrupt();

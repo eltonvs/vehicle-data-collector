@@ -14,11 +14,11 @@ import java.io.IOException;
 
 import br.ufrn.imd.vdc.activities.SettingsActivity;
 import br.ufrn.imd.vdc.activities.TaskProgressListener;
+import br.ufrn.imd.vdc.obd.ICommand;
 import br.ufrn.imd.vdc.obd.ObdCommandList;
 import br.ufrn.imd.vdc.obd.ObdCommandTask;
 import br.ufrn.imd.vdc.services.AbstractGatewayService;
 import br.ufrn.imd.vdc.services.ObdGatewayService;
-import br.ufrn.imd.vdc.services.tasks.ICommand;
 
 /**
  * Created by elton on 5/15/17.
@@ -40,7 +40,7 @@ public class ObdServiceManager {
                 Log.d(TAG, "onServiceConnected: Service is bound");
                 if (verifyPreRequisites()) {
                     service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder)
-                            .getService();
+                        .getService();
                     service.setContext(context);
                     try {
                         Log.d(TAG, "onServiceConnected: Trying to start Service");
@@ -109,7 +109,7 @@ public class ObdServiceManager {
                 Log.d(TAG, "doBindService: Creating Service");
                 Intent intentService = new Intent(context, ObdGatewayService.class);
                 if (context.bindService(intentService, serviceConnection,
-                        Context.BIND_AUTO_CREATE)) {
+                    Context.BIND_AUTO_CREATE)) {
                     Log.d(TAG, "doBindService: Service is bound");
                 } else {
                     Log.e(TAG, "doBindService: Error binding service");

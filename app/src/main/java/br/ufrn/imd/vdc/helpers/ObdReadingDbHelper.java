@@ -23,10 +23,14 @@ public class ObdReadingDbHelper extends SQLiteOpenHelper {
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "CREATE TABLE " + TABLE_READINGS + "(" +
-            READINGS_COLUMN_ID + " integer primary key not null autoincrement," +
-            READINGS_COLUMN_VEHICLE + " text," + READINGS_COLUMN_TIMESTAMP + " text," +
-            READINGS_COLUMN_LATITUDE + " real," + READINGS_COLUMN_LONGITUDE + " real," +
-            READINGS_COLUMN_ALTITUDE + " real," + READINGS_COLUMN_READINGS + " text);";
+                                                  READINGS_COLUMN_ID +
+                                                  " integer primary key not null autoincrement," +
+                                                  READINGS_COLUMN_VEHICLE + " text," +
+                                                  READINGS_COLUMN_TIMESTAMP + " text," +
+                                                  READINGS_COLUMN_LATITUDE + " real," +
+                                                  READINGS_COLUMN_LONGITUDE + " real," +
+                                                  READINGS_COLUMN_ALTITUDE + " real," +
+                                                  READINGS_COLUMN_READINGS + " text);";
 
     private static final String DATABASE_NAME = "obdCollector.db";
     private static final int DATABASE_VERSION = 1;
@@ -43,8 +47,8 @@ public class ObdReadingDbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(ObdReadingDbHelper.class.getName(),
-                "Upgrading database from version " + oldVersion + " to " + newVersion + ", which " +
-                        "will destroy all old data");
+            "Upgrading database from version " + oldVersion + " to " + newVersion + ", which " +
+            "will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_READINGS);
         onCreate(db);
     }
