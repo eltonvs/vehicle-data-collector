@@ -46,4 +46,9 @@ public class ObdCommandAdapter implements ICommand {
     public String getPID() {
         return obdCommand.getCommandPID();
     }
+
+    @Override
+    public String toString() {
+        return getName() + " = " + getFormattedResult() + "\n";
+    }
 }

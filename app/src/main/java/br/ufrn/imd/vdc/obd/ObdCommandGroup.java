@@ -76,4 +76,13 @@ public class ObdCommandGroup implements ICommand {
         }
         return results;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (ICommand command : commands) {
+            sb.append(command.toString());
+        }
+        return sb.toString();
+    }
 }

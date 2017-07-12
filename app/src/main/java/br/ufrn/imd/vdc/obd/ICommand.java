@@ -20,4 +20,7 @@ public interface ICommand {
     Object getName();
 
     Object getPID();
+
+    @Override
+    String toString();
 }

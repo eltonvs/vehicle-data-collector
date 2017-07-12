@@ -61,7 +61,7 @@ public class ObdCommandList {
         // Setup Commands
         setupCommands = new ObdCommandGroup();
 
-        // setupCommands.add(new ObdCommandAdapter(new ObdResetCommand()));
+        setupCommands.add(new ObdCommandAdapter(new ObdResetCommand()));
         setupCommands.add(new ObdCommandAdapter(new EchoOffCommand()));
         setupCommands.add(new ObdCommandAdapter(new LineFeedOffCommand()));
         setupCommands.add(new ObdCommandAdapter(new TimeoutCommand(62)));
