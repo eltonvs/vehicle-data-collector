@@ -12,13 +12,13 @@ import br.ufrn.imd.vdc.helpers.ObdReadingDbHelper;
 
 public class ObdReadingDAO extends GenericDAO<ObdReading> {
     private static final String[] columns = new String[]{
-            ObdReadingDbHelper.READINGS_COLUMN_ID,
-            ObdReadingDbHelper.READINGS_COLUMN_VEHICLE,
-            ObdReadingDbHelper.READINGS_COLUMN_TIMESTAMP,
-            ObdReadingDbHelper.READINGS_COLUMN_LATITUDE,
-            ObdReadingDbHelper.READINGS_COLUMN_LONGITUDE,
-            ObdReadingDbHelper.READINGS_COLUMN_ALTITUDE,
-            ObdReadingDbHelper.READINGS_COLUMN_READINGS
+        ObdReadingDbHelper.READINGS_COLUMN_ID,
+        ObdReadingDbHelper.READINGS_COLUMN_VEHICLE,
+        ObdReadingDbHelper.READINGS_COLUMN_TIMESTAMP,
+        ObdReadingDbHelper.READINGS_COLUMN_LATITUDE,
+        ObdReadingDbHelper.READINGS_COLUMN_LONGITUDE,
+        ObdReadingDbHelper.READINGS_COLUMN_ALTITUDE,
+        ObdReadingDbHelper.READINGS_COLUMN_READINGS
     };
 
     public ObdReadingDAO(Context context) {
@@ -37,7 +37,7 @@ public class ObdReadingDAO extends GenericDAO<ObdReading> {
 
         long insertedId = database.insert(ObdReadingDbHelper.TABLE_READINGS, null, values);
         Cursor cursor = database.query(ObdReadingDbHelper.TABLE_READINGS, columns,
-                ObdReadingDbHelper.READINGS_COLUMN_ID + " = " + insertedId, null, null, null, null);
+            ObdReadingDbHelper.READINGS_COLUMN_ID + " = " + insertedId, null, null, null, null);
         cursor.moveToFirst();
         ObdReading insertedReading = cursorToReading(cursor);
         cursor.close();
@@ -48,14 +48,14 @@ public class ObdReadingDAO extends GenericDAO<ObdReading> {
     public void delete(ObdReading reading) {
         String[] id = {String.valueOf(reading.getId())};
         database.delete(ObdReadingDbHelper.TABLE_READINGS,
-                ObdReadingDbHelper.READINGS_COLUMN_ID + " = ?", id);
+            ObdReadingDbHelper.READINGS_COLUMN_ID + " = ?", id);
     }
 
     @Override
     public List<ObdReading> list() {
         List<ObdReading> obdReadings = new ArrayList<>();
         Cursor cursor = database.query(ObdReadingDbHelper.TABLE_READINGS, columns, null, null, null,
-                null, ObdReadingDbHelper.READINGS_COLUMN_TIMESTAMP);
+            null, ObdReadingDbHelper.READINGS_COLUMN_TIMESTAMP);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -72,7 +72,7 @@ public class ObdReadingDAO extends GenericDAO<ObdReading> {
         ObdReading obdReading = null;
 
         Cursor cursor = database.query(ObdReadingDbHelper.TABLE_READINGS, columns, "id=" + id, null,
-                null, null, null);
+            null, null, null);
         if (cursor.moveToFirst()) {
             obdReading = cursorToReading(cursor);
         }

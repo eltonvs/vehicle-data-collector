@@ -5,11 +5,11 @@ package br.ufrn.imd.vdc.obd;
  */
 
 public abstract class CommandTask {
-    private final br.ufrn.imd.vdc.services.tasks.ICommand command;
+    private final ICommand command;
     private Long id;
     private volatile CommandTaskState state;
 
-    public CommandTask(br.ufrn.imd.vdc.services.tasks.ICommand command) {
+    public CommandTask(ICommand command) {
         this.command = command;
         this.state = CommandTaskState.NEW;
     }
@@ -22,7 +22,7 @@ public abstract class CommandTask {
         this.id = id;
     }
 
-    public br.ufrn.imd.vdc.services.tasks.ICommand getCommand() {
+    public ICommand getCommand() {
         return command;
     }
 

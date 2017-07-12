@@ -5,7 +5,7 @@ package br.ufrn.imd.vdc.obd;
  */
 
 public class ObdCommandTask extends CommandTask {
-    public ObdCommandTask(br.ufrn.imd.vdc.services.tasks.ICommand command) {
+    public ObdCommandTask(ICommand command) {
         super(command);
     }
 }

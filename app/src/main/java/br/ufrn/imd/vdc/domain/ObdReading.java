@@ -23,7 +23,7 @@ public class ObdReading implements Serializable {
     }
 
     public ObdReading(double latitude, double longitude, double altitude, long timestamp, String
-            vehicleid, String readings) {
+        vehicleid, String readings) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
@@ -91,7 +91,7 @@ public class ObdReading implements Serializable {
     public String toString() {
 
         return "lat:" + latitude + ";" + "long:" + longitude + ";" + "alt:" + altitude + ";" +
-                "vehicleid:" + vehicleId + ";" + "readings: " + readings;
+               "vehicleid:" + vehicleId + ";" + "readings: " + readings;
     }
 }
 

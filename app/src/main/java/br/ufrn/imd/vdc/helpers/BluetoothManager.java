@@ -44,7 +44,7 @@ public class BluetoothManager {
             sock.connect();
         } catch (IOException e) {
             Log.e(TAG, "There was an error while establishing Bluetooth connection. Falling back..",
-                    e);
+                e);
             fallbackConnect(sock);
         }
         return sock;
@@ -58,7 +58,7 @@ public class BluetoothManager {
             Method m = clazz.getMethod("createRfcommSocket", paramTypes);
             Object[] params = new Object[]{Integer.valueOf(1)};
             BluetoothSocket sockFallback = (BluetoothSocket) m.invoke(sock.getRemoteDevice(),
-                    params);
+                params);
             sockFallback.connect();
         } catch (Exception e2) {
             Log.e(TAG, "Couldn't fallback while establishing Bluetooth connection.", e2);
