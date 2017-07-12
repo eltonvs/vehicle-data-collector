@@ -27,8 +27,8 @@ public class ObdCommandGroup implements ICommand {
 
     @Override
     public void run(InputStream in, OutputStream out) throws IOException, InterruptedException {
-        for (ICommand command : commands) {
-            command.run(in, out);
+        for (int i = 0; i < commands.size(); i++) {
+            commands.get(i).run(in, out);
         }
     }
 
@@ -42,13 +42,12 @@ public class ObdCommandGroup implements ICommand {
     }
 
     @Override
-    public String getFormattedResult() {
-        StringBuilder results = new StringBuilder();
+    public List<Object> getFormattedResult() {
+        ArrayList<Object> results = new ArrayList<>();
         for (ICommand command : commands) {
-            results.append(command.getFormattedResult()).append("\n");
+            results.add(command.getFormattedResult());
         }
-        results.append("---");
-        return results.toString();
+        return results;
     }
 
     @Override

@@ -25,10 +25,16 @@ import com.github.pires.obd.commands.pressure.BarometricPressureCommand;
 import com.github.pires.obd.commands.pressure.FuelPressureCommand;
 import com.github.pires.obd.commands.pressure.FuelRailPressureCommand;
 import com.github.pires.obd.commands.pressure.IntakeManifoldPressureCommand;
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
+import com.github.pires.obd.commands.protocol.ObdResetCommand;
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
+import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.commands.temperature.AirIntakeTemperatureCommand;
 import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
 import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
 import com.github.pires.obd.enums.FuelTrim;
+import com.github.pires.obd.enums.ObdProtocols;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +43,7 @@ import java.util.List;
 public class ObdCommandList {
     private static final ObdCommandList instance = new ObdCommandList();
     private List<ICommand> commands;
+    private ObdCommandGroup setupCommands;
 
     private ObdCommandList() {
         fillCommandsList();
@@ -46,7 +53,21 @@ public class ObdCommandList {
         return instance;
     }
 
+    public ICommand setupDevice() {
+        return setupCommands;
+    }
+
     private void fillCommandsList() {
+        // Setup Commands
+        setupCommands = new ObdCommandGroup();
+
+        // setupCommands.add(new ObdCommandAdapter(new ObdResetCommand()));
+        setupCommands.add(new ObdCommandAdapter(new EchoOffCommand()));
+        setupCommands.add(new ObdCommandAdapter(new LineFeedOffCommand()));
+        setupCommands.add(new ObdCommandAdapter(new TimeoutCommand(62)));
+        // TODO: use protocol defined on settings
+        setupCommands.add(new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO)));
+
         // Default Commands
         commands = new ArrayList<>();
 

@@ -22,6 +22,7 @@ import br.ufrn.imd.vdc.activities.SettingsActivity;
 import br.ufrn.imd.vdc.helpers.BluetoothManager;
 import br.ufrn.imd.vdc.obd.CommandTask;
 import br.ufrn.imd.vdc.obd.ObdCommandAdapter;
+import br.ufrn.imd.vdc.obd.ObdCommandList;
 import br.ufrn.imd.vdc.obd.ObdCommandTask;
 
 public class ObdGatewayService extends AbstractGatewayService {
@@ -160,13 +161,7 @@ public class ObdGatewayService extends AbstractGatewayService {
             // Sleep while OBD device is being resetting.
             Thread.sleep(500);
 
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new EchoOffCommand())));
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new LineFeedOffCommand())));
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new TimeoutCommand(62))));
-
-            // TODO: use protocol defined on settings
-            enqueueTask(new ObdCommandTask(
-                new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO))));
+            enqueueTask(new ObdCommandTask(ObdCommandList.getInstance().setupDevice()));
         } catch (InterruptedException e) {
             Log.e(TAG, "obdSetup: An error occurred (InterruptedException)", e);
             Thread.currentThread().interrupt();

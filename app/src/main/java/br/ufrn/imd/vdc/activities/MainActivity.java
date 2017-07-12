@@ -11,9 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.ufrn.imd.vdc.R;
 import br.ufrn.imd.vdc.helpers.ObdServiceManager;
 import br.ufrn.imd.vdc.obd.CommandTask;
+import br.ufrn.imd.vdc.obd.ICommand;
+import br.ufrn.imd.vdc.obd.ObdCommandGroup;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
@@ -107,10 +112,19 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     @Override
     public void updateState(CommandTask task) {
         TextView tvResultsLog = (TextView) findViewById(R.id.tv_results);
-        tvResultsLog.setText(
-            tvResultsLog.getText() + (String) task.getCommand().getName() + " = " + task
-                .getCommand()
-                .getFormattedResult() + "\n");
+        ICommand command = task.getCommand();
+        StringBuilder sb = new StringBuilder();
+        if (command instanceof ObdCommandGroup) {
+            // Generate strings
+            ArrayList<String> names = (ArrayList<String>) command.getName();
+            ArrayList<Object> results = (ArrayList<Object>) command.getFormattedResult();
+            for (int i = 0; i < Math.min(names.size(), results.size()); i++) {
+                sb.append(names.get(i)).append(" = ").append(results.get(i)).append("\n");
+            }
+        } else {
+            sb.append(command.getName()).append(" = ").append(command.getFormattedResult()).append("\n");
+        }
+        tvResultsLog.setText(tvResultsLog.getText() + sb.toString());
     }
 
     @Override

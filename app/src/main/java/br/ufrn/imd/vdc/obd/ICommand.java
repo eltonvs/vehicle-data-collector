@@ -13,7 +13,7 @@ public interface ICommand {
 
     Object getResult();
 
-    String getFormattedResult();
+    Object getFormattedResult();
 
     Object getResultUnit();
 
