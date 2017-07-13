@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Bluetooth Settings -->
+    <PreferenceCategory
+        android:title="@string/pref_header_bluetooth">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="bluetooth_switch"
+            android:summaryOff="@string/pref_description_enable_bluetooth"
+            android:summaryOn="@string/pref_description_disable_bluetooth"
+            android:title="@string/pref_title_switch_bluetooth"/>
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:key="bluetooth_devices"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="@string/pref_description_bluetooth_devices"
+            android:title="@string/pref_title_bluetooth_devices" />
+    </PreferenceCategory>
+
+    <!-- Data & Sync Settings -->
+    <PreferenceCategory
+        android:title="@string/pref_header_data_sync"
+        android:enabled="false">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="data_sync_switch"
+            android:summary="@string/pref_description_enable_data_sync"
+            android:title="@string/pref_title_enable_data_sync" />
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_upload_url"
+            android:inputType="textUri"
+            android:key="post_url"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_description_upload_url"
+            android:title="@string/pref_title_upload_url" />
+
+        <EditTextPreference
+            android:inputType="number"
+            android:key="vehicle_id"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_description_vehicle_id"
+            android:title="@string/pref_title_vehicle_id" />
+
+        <ListPreference
+            android:defaultValue="-1"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:key="sync_frequency"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="@string/pref_description_sync_frequency"
+            android:title="@string/pref_title_sync_frequency" />
+    </PreferenceCategory>
+
+    <!-- GPS Settings -->
+    <PreferenceCategory
+        android:title="@string/pref_header_gps">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="gps_switch"
+            android:summary="@string/pref_description_enable_gps"
+            android:title="@string/pref_title_enable_gps" />
+    </PreferenceCategory>
+
+    <!-- OBD Settings -->
+    <PreferenceCategory
+        android:title="@string/pref_header_obd">
+
+        <ListPreference
+            android:defaultValue="0"
+            android:key="obd_protocol"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="@string/pref_description_obd_protocol"
+            android:title="@string/pref_title_obd_protocol" />
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_default_engine_displacement"
+            android:inputType="numberDecimal"
+            android:key="engine_displacement"
+            android:maxLength="3"
+            android:maxLines="1"
+            android:numeric="decimal"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_description_engine_displacement"
+            android:title="@string/pref_title_engine_displacement" />
+    </PreferenceCategory>
+</PreferenceScreen>
