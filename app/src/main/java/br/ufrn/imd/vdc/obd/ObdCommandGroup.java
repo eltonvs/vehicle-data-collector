@@ -27,8 +27,8 @@ public class ObdCommandGroup implements ICommand {
 
     @Override
     public void run(InputStream in, OutputStream out) throws IOException, InterruptedException {
-        for (int i = 0; i < commands.size(); i++) {
-            commands.get(i).run(in, out);
+        for (ICommand command : commands) {
+            command.run(in, out);
         }
     }
 
