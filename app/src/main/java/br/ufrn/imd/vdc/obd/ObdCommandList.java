@@ -3,12 +3,16 @@ package br.ufrn.imd.vdc.obd;
 
 import com.github.pires.obd.commands.SpeedCommand;
 import com.github.pires.obd.commands.control.DistanceMILOnCommand;
+import com.github.pires.obd.commands.control.DistanceSinceCCCommand;
 import com.github.pires.obd.commands.control.DtcNumberCommand;
 import com.github.pires.obd.commands.control.EquivalentRatioCommand;
 import com.github.pires.obd.commands.control.ModuleVoltageCommand;
+import com.github.pires.obd.commands.control.PendingTroubleCodesCommand;
+import com.github.pires.obd.commands.control.PermanentTroubleCodesCommand;
 import com.github.pires.obd.commands.control.TimingAdvanceCommand;
 import com.github.pires.obd.commands.control.TroubleCodesCommand;
 import com.github.pires.obd.commands.control.VinCommand;
+import com.github.pires.obd.commands.engine.AbsoluteLoadCommand;
 import com.github.pires.obd.commands.engine.LoadCommand;
 import com.github.pires.obd.commands.engine.MassAirFlowCommand;
 import com.github.pires.obd.commands.engine.OilTempCommand;
@@ -25,18 +29,27 @@ import com.github.pires.obd.commands.pressure.BarometricPressureCommand;
 import com.github.pires.obd.commands.pressure.FuelPressureCommand;
 import com.github.pires.obd.commands.pressure.FuelRailPressureCommand;
 import com.github.pires.obd.commands.pressure.IntakeManifoldPressureCommand;
+import com.github.pires.obd.commands.protocol.AvailablePidsCommand_01_20;
+import com.github.pires.obd.commands.protocol.AvailablePidsCommand_21_40;
+import com.github.pires.obd.commands.protocol.AvailablePidsCommand_41_60;
+import com.github.pires.obd.commands.protocol.EchoOffCommand;
+import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
+import com.github.pires.obd.commands.protocol.ObdResetCommand;
+import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
+import com.github.pires.obd.commands.protocol.TimeoutCommand;
 import com.github.pires.obd.commands.temperature.AirIntakeTemperatureCommand;
 import com.github.pires.obd.commands.temperature.AmbientAirTemperatureCommand;
 import com.github.pires.obd.commands.temperature.EngineCoolantTemperatureCommand;
 import com.github.pires.obd.enums.FuelTrim;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.github.pires.obd.enums.ObdProtocols;
 
 
 public class ObdCommandList {
     private static final ObdCommandList instance = new ObdCommandList();
-    private List<ICommand> commands;
+
+    private ObdCommandGroup setupCommands;
+    private ObdCommandGroup vehicleInformation;
+    private ObdCommandGroup dynamicData;
 
     private ObdCommandList() {
         fillCommandsList();
@@ -46,58 +59,88 @@ public class ObdCommandList {
         return instance;
     }
 
+    public ICommand setupDevice() {
+        return setupCommands;
+    }
+
+    public ICommand vehicleInformation() {
+        return vehicleInformation;
+    }
+
+    public ICommand dynamicData() {
+        return dynamicData;
+    }
+
     private void fillCommandsList() {
-        // Default Commands
-        commands = new ArrayList<>();
+        // Setup Commands
+        setupCommands = new ObdCommandGroup();
 
-        // Control
-        commands.add(new ObdCommandAdapter(new ModuleVoltageCommand()));
-        commands.add(new ObdCommandAdapter(new EquivalentRatioCommand()));
-        commands.add(new ObdCommandAdapter(new DistanceMILOnCommand()));
-        commands.add(new ObdCommandAdapter(new DtcNumberCommand()));
-        commands.add(new ObdCommandAdapter(new TimingAdvanceCommand()));
-        commands.add(new ObdCommandAdapter(new TroubleCodesCommand()));
-        commands.add(new ObdCommandAdapter(new VinCommand()));
+        setupCommands.add(new ObdCommandAdapter(new ObdResetCommand()));
+        setupCommands.add(new ObdCommandAdapter(new EchoOffCommand()));
+        setupCommands.add(new ObdCommandAdapter(new LineFeedOffCommand()));
+        setupCommands.add(new ObdCommandAdapter(new TimeoutCommand(62)));
+        setupCommands.add(new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO)));
 
-        // Engine
-        commands.add(new ObdCommandAdapter(new LoadCommand()));
-        commands.add(new ObdCommandAdapter(new RPMCommand()));
-        commands.add(new ObdCommandAdapter(new RuntimeCommand()));
-        commands.add(new ObdCommandAdapter(new MassAirFlowCommand()));
-        commands.add(new ObdCommandAdapter(new ThrottlePositionCommand()));
 
-        // Fuel
-        commands.add(new ObdCommandAdapter(new FindFuelTypeCommand()));
-        commands.add(new ObdCommandAdapter(new ConsumptionRateCommand()));
-        // commands.add(new ObdCommandAdapter(new AverageFuelEconomyObdCommand()));
-        // commands.add(new ObdCommandAdapter(new FuelEconomyCommand()));
-        commands.add(new ObdCommandAdapter(new FuelLevelCommand()));
-        // commands.add(new ObdCommandAdapter(new FuelEconomyMAPObdCommand()));
-        // commands.add(new ObdCommandAdapter(new FuelEconomyCommandedMAPObdCommand()));
-        commands.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.LONG_TERM_BANK_1)));
-        commands.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.LONG_TERM_BANK_2)));
-        commands.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_1)));
-        commands.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_2)));
-        commands.add(new ObdCommandAdapter(new AirFuelRatioCommand()));
-        commands.add(new ObdCommandAdapter(new WidebandAirFuelRatioCommand()));
-        commands.add(new ObdCommandAdapter(new OilTempCommand()));
+        // Vehicle Information Commands
+        vehicleInformation = new ObdCommandGroup();
 
-        // Pressure
-        commands.add(new ObdCommandAdapter(new BarometricPressureCommand()));
-        commands.add(new ObdCommandAdapter(new FuelPressureCommand()));
-        commands.add(new ObdCommandAdapter(new FuelRailPressureCommand()));
-        commands.add(new ObdCommandAdapter(new IntakeManifoldPressureCommand()));
+        vehicleInformation.add(new ObdCommandAdapter(new TroubleCodesCommand()));
+        vehicleInformation.add(new ObdCommandAdapter(new VinCommand()));
 
-        // Temperature
-        commands.add(new ObdCommandAdapter(new AirIntakeTemperatureCommand()));
-        commands.add(new ObdCommandAdapter(new AmbientAirTemperatureCommand()));
-        commands.add(new ObdCommandAdapter(new EngineCoolantTemperatureCommand()));
+        // Protocol
+        // TODO: Map available commands, then create dynamic data list based on that
+        vehicleInformation.add(new ObdCommandAdapter(new AvailablePidsCommand_01_20()));
+        vehicleInformation.add(new ObdCommandAdapter(new AvailablePidsCommand_21_40()));
+        vehicleInformation.add(new ObdCommandAdapter(new AvailablePidsCommand_41_60()));
+
+
+        // Dynamic Data Commands
+        dynamicData = new ObdCommandGroup();
 
         // Misc
-        commands.add(new ObdCommandAdapter(new SpeedCommand()));
+        dynamicData.add(new ObdCommandAdapter(new SpeedCommand()));
+
+        // Control
+        dynamicData.add(new ObdCommandAdapter(new DistanceMILOnCommand()));
+        dynamicData.add(new ObdCommandAdapter(new DistanceSinceCCCommand()));
+        dynamicData.add(new ObdCommandAdapter(new DtcNumberCommand()));
+        dynamicData.add(new ObdCommandAdapter(new EquivalentRatioCommand()));
+        dynamicData.add(new ObdCommandAdapter(new ModuleVoltageCommand()));
+        dynamicData.add(new ObdCommandAdapter(new TimingAdvanceCommand()));
+        dynamicData.add(new ObdCommandAdapter(new PendingTroubleCodesCommand()));
+        dynamicData.add(new ObdCommandAdapter(new PermanentTroubleCodesCommand()));
+
+        // Engine
+        dynamicData.add(new ObdCommandAdapter(new AbsoluteLoadCommand()));
+        dynamicData.add(new ObdCommandAdapter(new LoadCommand()));
+        dynamicData.add(new ObdCommandAdapter(new MassAirFlowCommand()));
+        dynamicData.add(new ObdCommandAdapter(new OilTempCommand()));
+        dynamicData.add(new ObdCommandAdapter(new RPMCommand()));
+        dynamicData.add(new ObdCommandAdapter(new RuntimeCommand()));
+        dynamicData.add(new ObdCommandAdapter(new ThrottlePositionCommand()));
+
+        // Fuel
+        dynamicData.add(new ObdCommandAdapter(new AirFuelRatioCommand()));
+        dynamicData.add(new ObdCommandAdapter(new ConsumptionRateCommand()));
+        dynamicData.add(new ObdCommandAdapter(new FindFuelTypeCommand()));
+        dynamicData.add(new ObdCommandAdapter(new FuelLevelCommand()));
+        dynamicData.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.LONG_TERM_BANK_1)));
+        dynamicData.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.LONG_TERM_BANK_2)));
+        dynamicData.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_1)));
+        dynamicData.add(new ObdCommandAdapter(new FuelTrimCommand(FuelTrim.SHORT_TERM_BANK_2)));
+        dynamicData.add(new ObdCommandAdapter(new WidebandAirFuelRatioCommand()));
+
+        // Pressure
+        dynamicData.add(new ObdCommandAdapter(new BarometricPressureCommand()));
+        dynamicData.add(new ObdCommandAdapter(new FuelPressureCommand()));
+        dynamicData.add(new ObdCommandAdapter(new FuelRailPressureCommand()));
+        dynamicData.add(new ObdCommandAdapter(new IntakeManifoldPressureCommand()));
+
+        // Temperature
+        dynamicData.add(new ObdCommandAdapter(new AirIntakeTemperatureCommand()));
+        dynamicData.add(new ObdCommandAdapter(new AmbientAirTemperatureCommand()));
+        dynamicData.add(new ObdCommandAdapter(new EngineCoolantTemperatureCommand()));
     }
 
-    public List<ICommand> getCommands() {
-        return commands;
-    }
 }

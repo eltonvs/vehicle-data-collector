@@ -107,10 +107,7 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     @Override
     public void updateState(CommandTask task) {
         TextView tvResultsLog = (TextView) findViewById(R.id.tv_results);
-        tvResultsLog.setText(
-            tvResultsLog.getText() + (String) task.getCommand().getName() + " = " + task
-                .getCommand()
-                .getFormattedResult() + "\n");
+        tvResultsLog.append(task.getCommand().toString());
     }
 
     @Override

@@ -13,11 +13,14 @@ public interface ICommand {
 
     Object getResult();
 
-    String getFormattedResult();
+    Object getFormattedResult();
 
     Object getResultUnit();
 
     Object getName();
 
     Object getPID();
+
+    @Override
+    String toString();
 }

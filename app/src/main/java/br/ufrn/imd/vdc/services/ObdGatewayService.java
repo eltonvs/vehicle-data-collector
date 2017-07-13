@@ -8,12 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
 
-import com.github.pires.obd.commands.protocol.EchoOffCommand;
-import com.github.pires.obd.commands.protocol.LineFeedOffCommand;
-import com.github.pires.obd.commands.protocol.ObdResetCommand;
-import com.github.pires.obd.commands.protocol.SelectProtocolCommand;
-import com.github.pires.obd.commands.protocol.TimeoutCommand;
-import com.github.pires.obd.enums.ObdProtocols;
 import com.github.pires.obd.exceptions.UnsupportedCommandException;
 
 import java.io.IOException;
@@ -21,7 +15,7 @@ import java.io.IOException;
 import br.ufrn.imd.vdc.activities.SettingsActivity;
 import br.ufrn.imd.vdc.helpers.BluetoothManager;
 import br.ufrn.imd.vdc.obd.CommandTask;
-import br.ufrn.imd.vdc.obd.ObdCommandAdapter;
+import br.ufrn.imd.vdc.obd.ObdCommandList;
 import br.ufrn.imd.vdc.obd.ObdCommandTask;
 
 public class ObdGatewayService extends AbstractGatewayService {
@@ -153,25 +147,9 @@ public class ObdGatewayService extends AbstractGatewayService {
         obdSetup();
     }
 
-    private void obdSetup() throws IOException {
-        try {
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new ObdResetCommand())));
-
-            // Sleep while OBD device is being resetting.
-            Thread.sleep(500);
-
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new EchoOffCommand())));
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new LineFeedOffCommand())));
-            enqueueTask(new ObdCommandTask(new ObdCommandAdapter(new TimeoutCommand(62))));
-
-            // TODO: use protocol defined on settings
-            enqueueTask(new ObdCommandTask(
-                new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO))));
-        } catch (InterruptedException e) {
-            Log.e(TAG, "obdSetup: An error occurred (InterruptedException)", e);
-            Thread.currentThread().interrupt();
-            throw new IOException();
-        }
+    private void obdSetup() {
+        enqueueTask(new ObdCommandTask(ObdCommandList.getInstance().setupDevice()));
+        enqueueTask(new ObdCommandTask(ObdCommandList.getInstance().vehicleInformation()));
     }
 
     @Override
