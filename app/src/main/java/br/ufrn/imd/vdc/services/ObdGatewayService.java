@@ -149,6 +149,7 @@ public class ObdGatewayService extends AbstractGatewayService {
 
     private void obdSetup() {
         enqueueTask(new ObdCommandTask(ObdCommandList.getInstance().setupDevice()));
+        enqueueTask(new ObdCommandTask(ObdCommandList.getInstance().vehicleInformation()));
     }
 
     @Override

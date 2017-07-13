@@ -14,7 +14,6 @@ import java.io.IOException;
 
 import br.ufrn.imd.vdc.activities.SettingsActivity;
 import br.ufrn.imd.vdc.activities.TaskProgressListener;
-import br.ufrn.imd.vdc.obd.ICommand;
 import br.ufrn.imd.vdc.obd.ObdCommandList;
 import br.ufrn.imd.vdc.obd.ObdCommandTask;
 import br.ufrn.imd.vdc.services.AbstractGatewayService;
@@ -125,8 +124,7 @@ public class ObdServiceManager {
     public void enqueueDefaultCommands() {
         if (currentState == Status.CONNECTED) {
             Log.d(TAG, "enqueueDefaultCommands: Enqueuing Commands");
-            for (ICommand cmd : ObdCommandList.getInstance().getCommands())
-                service.enqueueTask(new ObdCommandTask(cmd));
+            service.enqueueTask(new ObdCommandTask(ObdCommandList.getInstance().dynamicData()));
         } else {
             Log.e(TAG, "enqueueDefaultCommands: Service isn't connected");
         }
