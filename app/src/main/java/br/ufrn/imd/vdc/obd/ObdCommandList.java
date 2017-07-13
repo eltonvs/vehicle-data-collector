@@ -7,6 +7,8 @@ import com.github.pires.obd.commands.control.DistanceSinceCCCommand;
 import com.github.pires.obd.commands.control.DtcNumberCommand;
 import com.github.pires.obd.commands.control.EquivalentRatioCommand;
 import com.github.pires.obd.commands.control.ModuleVoltageCommand;
+import com.github.pires.obd.commands.control.PendingTroubleCodesCommand;
+import com.github.pires.obd.commands.control.PermanentTroubleCodesCommand;
 import com.github.pires.obd.commands.control.TimingAdvanceCommand;
 import com.github.pires.obd.commands.control.TroubleCodesCommand;
 import com.github.pires.obd.commands.control.VinCommand;
@@ -83,7 +85,7 @@ public class ObdCommandList {
         // Vehicle Information Commands
         vehicleInformation = new ObdCommandGroup();
 
-        // VIN
+        vehicleInformation.add(new ObdCommandAdapter(new TroubleCodesCommand()));
         vehicleInformation.add(new ObdCommandAdapter(new VinCommand()));
 
         // Protocol
@@ -106,7 +108,8 @@ public class ObdCommandList {
         dynamicData.add(new ObdCommandAdapter(new EquivalentRatioCommand()));
         dynamicData.add(new ObdCommandAdapter(new ModuleVoltageCommand()));
         dynamicData.add(new ObdCommandAdapter(new TimingAdvanceCommand()));
-        dynamicData.add(new ObdCommandAdapter(new TroubleCodesCommand()));
+        dynamicData.add(new ObdCommandAdapter(new PendingTroubleCodesCommand()));
+        dynamicData.add(new ObdCommandAdapter(new PermanentTroubleCodesCommand()));
 
         // Engine
         dynamicData.add(new ObdCommandAdapter(new AbsoluteLoadCommand()));
