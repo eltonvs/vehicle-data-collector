@@ -4,8 +4,6 @@ package br.ufrn.imd.vdc.activities;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,7 +14,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -24,7 +21,6 @@ import android.widget.Toast;
 import com.github.pires.obd.enums.ObdProtocols;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import br.ufrn.imd.vdc.R;
 
@@ -81,47 +77,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
-            .getDefaultSharedPreferences(preference.getContext())
-            .getString(preference.getKey(), ""));
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        getFragmentManager().beginTransaction()
+            .replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -135,24 +97,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class SettingsFragment extends PreferenceFragment {
-        private final String TAG = SettingsFragment.class.getName();
+        private static final String TAG = SettingsFragment.class.getName();
 
-        // Bluetooth
         private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         private ListPreference btDevices;
-
-        // Data/Sync
-        SwitchPreference dataSyncSwitch;
-        EditTextPreference uploadURL;
-        EditTextPreference vehicleID;
-        ListPreference syncFrequency;
-
-        // GPS
         private LocationManager locationManager;
-        private SwitchPreference gpsSwitch;
-
-        // OBD
         private ListPreference obdProtocols;
+
+        /**
+         * Binds a preference's summary to its value. More specifically, when the
+         * preference's value is changed, its summary (line of text below the
+         * preference title) is updated to reflect the value. The summary is also
+         * immediately updated upon calling this method. The exact display format is
+         * dependent on the type of preference.
+         *
+         * @see #sBindPreferenceSummaryToValueListener
+         */
+        private static void bindPreferenceSummaryToValue(Preference preference) {
+            // Set the listener to watch for value changes.
+            preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
+            // Trigger the listener immediately with the preference's
+            // current value.
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
+                .getDefaultSharedPreferences(preference.getContext())
+                .getString(preference.getKey(), ""));
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -161,6 +131,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.preferences);
 
             // Bluetooth
+            setUpBluetoothSettings();
+
+            // Data/Sync
+            setUpDataSyncSettings();
+
+            // GPS
+            setUpGpsSettings();
+
+            // OBD
+            setUpObdSettings();
+        }
+
+        private void setUpBluetoothSettings() {
             SwitchPreference btSwitch = (SwitchPreference) findPreference(BLUETOOTH_SWITCH);
             btDevices = (ListPreference) findPreference(BLUETOOTH_DEVICES);
 
@@ -200,13 +183,42 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 }
             });
             bindPreferenceSummaryToValue(btDevices);
+        }
 
+        private void fillBluetoothDevicesList() {
+            if (btAdapter != null) {
+                ArrayList<CharSequence> pairedDevicesStrings = new ArrayList<>();
+                ArrayList<CharSequence> pairedDevicesAddress = new ArrayList<>();
+                for (BluetoothDevice device : btAdapter.getBondedDevices()) {
+                    pairedDevicesStrings.add(device.getName() + "\n" + device.getAddress());
+                    pairedDevicesAddress.add(device.getAddress());
+                }
 
-            // Data/Sync
-            dataSyncSwitch = (SwitchPreference) findPreference(DATA_SYNC_SWITCH);
-            uploadURL = (EditTextPreference) findPreference(DATA_SYNC_POST_URL);
-            vehicleID = (EditTextPreference) findPreference(DATA_SYNC_VEHICLE_ID);
-            syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
+                btDevices.setEntries(pairedDevicesStrings.toArray(new CharSequence[0]));
+                btDevices.setEntryValues(pairedDevicesAddress.toArray(new CharSequence[0]));
+            }
+        }
+
+        private void turnOnBluetooth() {
+            if (btAdapter != null) {
+                btAdapter.enable();
+                btDevices.setEnabled(true);
+            }
+        }
+
+        private void turnOffBluetooth() {
+            if (btAdapter != null) {
+                btAdapter.disable();
+                btDevices.setEnabled(false);
+            }
+        }
+
+        private void setUpDataSyncSettings() {
+            SwitchPreference dataSyncSwitch = (SwitchPreference) findPreference(DATA_SYNC_SWITCH);
+            EditTextPreference uploadURL = (EditTextPreference) findPreference(DATA_SYNC_POST_URL);
+            EditTextPreference vehicleID = (EditTextPreference) findPreference
+                (DATA_SYNC_VEHICLE_ID);
+            ListPreference syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
 
             dataSyncSwitch.setOnPreferenceChangeListener(
                 new Preference.OnPreferenceChangeListener() {
@@ -227,12 +239,26 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(uploadURL);
             bindPreferenceSummaryToValue(vehicleID);
             bindPreferenceSummaryToValue(syncFrequency);
+        }
 
+        /**
+         * TODO: Create Data Sync module (turn on)
+         */
+        private void turnOnDataSync() {
+            throw new UnsupportedOperationException();
+        }
 
-            // GPS
+        /**
+         * TODO: Create Data Sync Module (turn off)
+         */
+        private void turnOffDataSync() {
+            throw new UnsupportedOperationException();
+        }
+
+        private void setUpGpsSettings() {
+            SwitchPreference gpsSwitch = (SwitchPreference) findPreference(GPS_SWITCH);
+
             locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-
-            gpsSwitch = (SwitchPreference) findPreference(GPS_SWITCH);
 
             if (locationManager == null) {
                 // Bluetooth not available
@@ -264,9 +290,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
+        }
 
+        // TODO: Create turnOnGPS
+        private void turnOnGPS() {
+            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)", Toast.LENGTH_SHORT)
+                .show();
+        }
 
-            // OBD
+        // TODO: Create turnOffGPS
+        private void turnOffGPS() {
+            Toast
+                .makeText(getActivity(), "Turning GPS off... (not working yet)", Toast.LENGTH_SHORT)
+                .show();
+        }
+
+        private boolean isGPSEnabled() {
+            return locationManager != null &&
+                   locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+
+        private void setUpObdSettings() {
             obdProtocols = (ListPreference) findPreference(OBD_PROTOCOL);
             fillObdProtocols();
             bindPreferenceSummaryToValue(obdProtocols);
@@ -274,65 +318,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             EditTextPreference engineDisplacement = (EditTextPreference) findPreference
                 (ENGINE_DISPLACEMENT);
             bindPreferenceSummaryToValue(engineDisplacement);
-        }
-
-        private void fillBluetoothDevicesList() {
-            if (btAdapter != null) {
-                ArrayList<CharSequence> pairedDevicesStrings = new ArrayList<>();
-                ArrayList<CharSequence> pairedDevicesAddress = new ArrayList<>();
-                for (BluetoothDevice device : btAdapter.getBondedDevices()) {
-                    pairedDevicesStrings.add(device.getName() + "\n" + device.getAddress());
-                    pairedDevicesAddress.add(device.getAddress());
-                }
-
-                btDevices.setEntries(pairedDevicesStrings.toArray(new CharSequence[0]));
-                btDevices.setEntryValues(pairedDevicesAddress.toArray(new CharSequence[0]));
-            }
-        }
-
-        private void turnOnBluetooth() {
-            if (btAdapter != null) {
-                btAdapter.enable();
-                btDevices.setEnabled(true);
-            }
-        }
-
-        private void turnOffBluetooth() {
-            if (btAdapter != null) {
-                btAdapter.disable();
-                btDevices.setEnabled(false);
-            }
-        }
-
-        /**
-         * TODO: Create Data Sync module (turn on)
-         */
-        private void turnOnDataSync() {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * TODO: Create Data Sync Module (turn off)
-         */
-        private void turnOffDataSync() {
-            throw new UnsupportedOperationException();
-        }
-
-        private void turnOnGPS() {
-            Toast.makeText(getActivity(), "Turning GPS on... (not working yet)", Toast.LENGTH_SHORT)
-                .show();
-        }
-
-        private void turnOffGPS() {
-            Toast
-                .makeText(getActivity(), "Turning GPS off... (not working yet)", Toast
-                    .LENGTH_SHORT)
-                .show();
-        }
-
-        private boolean isGPSEnabled() {
-            return locationManager != null &&
-                   locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
         private void fillObdProtocols() {
@@ -344,5 +329,4 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             obdProtocols.setEntryValues(protocolsStrings.toArray(new CharSequence[0]));
         }
     }
-
 }
