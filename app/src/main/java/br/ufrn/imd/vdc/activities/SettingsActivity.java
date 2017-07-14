@@ -4,8 +4,6 @@ package br.ufrn.imd.vdc.activities;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,14 +14,13 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.pires.obd.enums.ObdProtocols;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import br.ufrn.imd.vdc.R;
 
@@ -80,84 +77,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of text below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private static void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
-            .getDefaultSharedPreferences(preference.getContext())
-            .getString(preference.getKey(), ""));
-    }
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout & Configuration
-            .SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupActionBar();
+        getFragmentManager().beginTransaction()
+            .replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-    }
-
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    protected boolean isValidFragment(String fragmentName) {
-        return fragmentName.equals(PreferenceFragment.class.getName()) ||
-               fragmentName.equals(DataSyncPreferenceFragment.class.getName()) ||
-               fragmentName.equals(BluetoothPreferenceFragment.class.getName()) ||
-               fragmentName.equals(GPSPreferenceFragment.class.getName()) ||
-               fragmentName.equals(OBDPreferenceFragment.class.getName());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -168,89 +94,56 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class DataSyncPreferenceFragment extends PreferenceFragment {
-        SwitchPreference dataSyncSwitch;
-        EditTextPreference uploadURL;
-        EditTextPreference vehicleID;
-        ListPreference syncFrequency;
+    public static class SettingsFragment extends PreferenceFragment {
+        private static final String TAG = SettingsFragment.class.getName();
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_data_sync);
-            setHasOptionsMenu(true);
-
-            dataSyncSwitch = (SwitchPreference) findPreference(DATA_SYNC_SWITCH);
-            uploadURL = (EditTextPreference) findPreference(DATA_SYNC_POST_URL);
-            vehicleID = (EditTextPreference) findPreference(DATA_SYNC_VEHICLE_ID);
-            syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
-
-            dataSyncSwitch.setOnPreferenceChangeListener(
-                new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        boolean val = !((SwitchPreference) preference).isChecked();
-
-                        if (val) {
-                            turnOnDataSync();
-                        } else {
-                            turnOffDataSync();
-                        }
-
-                        return true;
-                    }
-                });
-
-            bindPreferenceSummaryToValue(uploadURL);
-            bindPreferenceSummaryToValue(vehicleID);
-            bindPreferenceSummaryToValue(syncFrequency);
-        }
-
-        /**
-         * TODO: Create Data Sync module (turn on)
-         */
-        private void turnOnDataSync() {
-            throw new UnsupportedOperationException();
-        }
-
-        /**
-         * TODO: Create Data Sync Module (turn off)
-         */
-        private void turnOffDataSync() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                getActivity().onBackPressed();
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * This fragment shows bluetooth preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class BluetoothPreferenceFragment extends PreferenceFragment {
         private final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         private ListPreference btDevices;
+        private LocationManager locationManager;
+        private ListPreference obdProtocols;
+
+        /**
+         * Binds a preference's summary to its value. More specifically, when the
+         * preference's value is changed, its summary (line of text below the
+         * preference title) is updated to reflect the value. The summary is also
+         * immediately updated upon calling this method. The exact display format is
+         * dependent on the type of preference.
+         *
+         * @see #sBindPreferenceSummaryToValueListener
+         */
+        private static void bindPreferenceSummaryToValue(Preference preference) {
+            // Set the listener to watch for value changes.
+            preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+
+            // Trigger the listener immediately with the preference's
+            // current value.
+            sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, PreferenceManager
+                .getDefaultSharedPreferences(preference.getContext())
+                .getString(preference.getKey(), ""));
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_bluetooth);
-            setHasOptionsMenu(true);
+            Log.d(TAG, "onCreate: Creating Fragment...");
+            addPreferencesFromResource(R.xml.preferences);
 
+            // Bluetooth
+            setUpBluetoothSettings();
+
+            // Data/Sync
+            setUpDataSyncSettings();
+
+            // GPS
+            setUpGpsSettings();
+
+            // OBD
+            setUpObdSettings();
+        }
+
+        private void setUpBluetoothSettings() {
             SwitchPreference btSwitch = (SwitchPreference) findPreference(BLUETOOTH_SWITCH);
             btDevices = (ListPreference) findPreference(BLUETOOTH_DEVICES);
 
@@ -320,35 +213,52 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
         }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                getActivity().onBackPressed();
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
+        private void setUpDataSyncSettings() {
+            SwitchPreference dataSyncSwitch = (SwitchPreference) findPreference(DATA_SYNC_SWITCH);
+            EditTextPreference uploadURL = (EditTextPreference) findPreference(DATA_SYNC_POST_URL);
+            EditTextPreference vehicleID = (EditTextPreference) findPreference
+                (DATA_SYNC_VEHICLE_ID);
+            ListPreference syncFrequency = (ListPreference) findPreference(DATA_SYNC_FREQUENCY);
+
+            dataSyncSwitch.setOnPreferenceChangeListener(
+                new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+                        boolean val = !((SwitchPreference) preference).isChecked();
+
+                        if (val) {
+                            turnOnDataSync();
+                        } else {
+                            turnOffDataSync();
+                        }
+
+                        return true;
+                    }
+                });
+
+            bindPreferenceSummaryToValue(uploadURL);
+            bindPreferenceSummaryToValue(vehicleID);
+            bindPreferenceSummaryToValue(syncFrequency);
         }
-    }
 
-    /**
-     * This fragment shows GPS preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class GPSPreferenceFragment extends PreferenceFragment {
-        private LocationManager locationManager;
-        private SwitchPreference gpsSwitch;
+        /**
+         * TODO: Create Data Sync module (turn on)
+         */
+        private void turnOnDataSync() {
+            throw new UnsupportedOperationException();
+        }
 
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_gps);
-            setHasOptionsMenu(true);
+        /**
+         * TODO: Create Data Sync Module (turn off)
+         */
+        private void turnOffDataSync() {
+            throw new UnsupportedOperationException();
+        }
+
+        private void setUpGpsSettings() {
+            SwitchPreference gpsSwitch = (SwitchPreference) findPreference(GPS_SWITCH);
 
             locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-
-            gpsSwitch = (SwitchPreference) findPreference(GPS_SWITCH);
 
             if (locationManager == null) {
                 // Bluetooth not available
@@ -382,15 +292,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             });
         }
 
+        // TODO: Create turnOnGPS
         private void turnOnGPS() {
             Toast.makeText(getActivity(), "Turning GPS on... (not working yet)", Toast.LENGTH_SHORT)
                 .show();
         }
 
+        // TODO: Create turnOffGPS
         private void turnOffGPS() {
             Toast
-                .makeText(getActivity(), "Turning GPS off... (not working yet)", Toast
-                    .LENGTH_SHORT)
+                .makeText(getActivity(), "Turning GPS off... (not working yet)", Toast.LENGTH_SHORT)
                 .show();
         }
 
@@ -399,31 +310,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                    locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         }
 
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                getActivity().onBackPressed();
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-    }
-
-    /**
-     * This fragment shows OBD preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class OBDPreferenceFragment extends PreferenceFragment {
-        private ListPreference obdProtocols;
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_obd);
-            setHasOptionsMenu(true);
-
+        private void setUpObdSettings() {
             obdProtocols = (ListPreference) findPreference(OBD_PROTOCOL);
             fillObdProtocols();
             bindPreferenceSummaryToValue(obdProtocols);
@@ -440,16 +327,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             }
             obdProtocols.setEntries(protocolsStrings.toArray(new CharSequence[0]));
             obdProtocols.setEntryValues(protocolsStrings.toArray(new CharSequence[0]));
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                getActivity().onBackPressed();
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
         }
     }
 }
