@@ -47,12 +47,7 @@ import com.github.pires.obd.enums.ObdProtocols;
 public class ObdCommandList {
     private static final ObdCommandList instance = new ObdCommandList();
 
-    private ObdCommandGroup setupCommands;
-    private ObdCommandGroup vehicleInformation;
-    private ObdCommandGroup dynamicData;
-
     private ObdCommandList() {
-        fillCommandsList();
     }
 
     public static ObdCommandList getInstance() {
@@ -60,30 +55,25 @@ public class ObdCommandList {
     }
 
     public ICommand setupDevice() {
-        return setupCommands;
+        return setupDevice(ObdProtocols.AUTO);
     }
 
-    public ICommand vehicleInformation() {
-        return vehicleInformation;
-    }
-
-    public ICommand dynamicData() {
-        return dynamicData;
-    }
-
-    private void fillCommandsList() {
+    public ICommand setupDevice(ObdProtocols protocol) {
         // Setup Commands
-        setupCommands = new ObdCommandGroup();
+        ObdCommandGroup setupCommands = new ObdCommandGroup();
 
         setupCommands.add(new ObdCommandAdapter(new ObdResetCommand()));
         setupCommands.add(new ObdCommandAdapter(new EchoOffCommand()));
         setupCommands.add(new ObdCommandAdapter(new LineFeedOffCommand()));
         setupCommands.add(new ObdCommandAdapter(new TimeoutCommand(62)));
-        setupCommands.add(new ObdCommandAdapter(new SelectProtocolCommand(ObdProtocols.AUTO)));
+        setupCommands.add(new ObdCommandAdapter(new SelectProtocolCommand(protocol)));
 
+        return setupCommands;
+    }
 
+    public ICommand vehicleInformation() {
         // Vehicle Information Commands
-        vehicleInformation = new ObdCommandGroup();
+        ObdCommandGroup vehicleInformation = new ObdCommandGroup();
 
         vehicleInformation.add(new ObdCommandAdapter(new TroubleCodesCommand()));
         vehicleInformation.add(new ObdCommandAdapter(new VinCommand()));
@@ -94,9 +84,12 @@ public class ObdCommandList {
         vehicleInformation.add(new ObdCommandAdapter(new AvailablePidsCommand_21_40()));
         vehicleInformation.add(new ObdCommandAdapter(new AvailablePidsCommand_41_60()));
 
+        return vehicleInformation;
+    }
 
+    public ICommand dynamicData() {
         // Dynamic Data Commands
-        dynamicData = new ObdCommandGroup();
+        ObdCommandGroup dynamicData = new ObdCommandGroup();
 
         // Misc
         dynamicData.add(new ObdCommandAdapter(new SpeedCommand()));
@@ -141,6 +134,7 @@ public class ObdCommandList {
         dynamicData.add(new ObdCommandAdapter(new AirIntakeTemperatureCommand()));
         dynamicData.add(new ObdCommandAdapter(new AmbientAirTemperatureCommand()));
         dynamicData.add(new ObdCommandAdapter(new EngineCoolantTemperatureCommand()));
-    }
 
+        return dynamicData;
+    }
 }
