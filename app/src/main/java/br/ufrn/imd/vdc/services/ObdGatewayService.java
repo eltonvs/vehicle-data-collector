@@ -1,8 +1,5 @@
 package br.ufrn.imd.vdc.services;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
@@ -20,8 +17,6 @@ import br.ufrn.imd.vdc.obd.ObdCommandTask;
 
 public class ObdGatewayService extends AbstractGatewayService {
     private static final String TAG = ObdGatewayService.class.getName();
-    private BluetoothDevice device;
-    private BluetoothSocket btSocket;
 
     @Override
     protected void executeTask() {
@@ -36,9 +31,10 @@ public class ObdGatewayService extends AbstractGatewayService {
                 if (task.getState().equals(CommandTask.CommandTaskState.NEW)) {
                     Log.d(TAG, "executeTask: Task state is NEW. Run it...");
                     task.setState(CommandTask.CommandTaskState.RUNNING);
-                    if (btSocket.isConnected()) {
-                        task.getCommand().run(btSocket.getInputStream(),
-                            btSocket.getOutputStream());
+                    if (BluetoothManager.getInstance().isConnected()) {
+                        task.getCommand()
+                            .run(BluetoothManager.getInstance().getSocket().getInputStream(),
+                                BluetoothManager.getInstance().getSocket().getOutputStream());
                         task.setState(CommandTask.CommandTaskState.FINISHED);
                     } else {
                         task.setState(CommandTask.CommandTaskState.EXECUTION_ERROR);
@@ -102,28 +98,21 @@ public class ObdGatewayService extends AbstractGatewayService {
     }
 
     private void setupBluetoothDevice() {
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         final String btDeviceMAC = prefs.getString(SettingsActivity.BLUETOOTH_DEVICES, "-1");
 
-        if (!btDeviceMAC.equals("-1")) {
-            Log.d(TAG, "Creating a Bluetooth Device");
-            device = btAdapter.getRemoteDevice(btDeviceMAC);
-            Log.d(TAG, "Device Name: " + device.getName());
-
+        if (!btDeviceMAC.equals("-1") && BluetoothManager.getInstance().setUpDevice(btDeviceMAC)) {
             context.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     ActionBar actionBar = context.getSupportActionBar();
                     if (actionBar != null) {
-                        actionBar.setSubtitle(device.getName() + " - " + btDeviceMAC);
+                        actionBar.setSubtitle(
+                            BluetoothManager.getInstance().getDevice().getName() + " - " +
+                            btDeviceMAC);
                     }
                 }
             });
-
-            if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-                Log.d(TAG, "Device is bonded, starting connection");
-            }
         }
     }
 
@@ -132,14 +121,14 @@ public class ObdGatewayService extends AbstractGatewayService {
 
         isRunning = true;
         try {
-            btSocket = BluetoothManager.connect(device);
+            BluetoothManager.getInstance().connect();
         } catch (IOException e) {
             Log.e(TAG, "startObdConnection: Error occurred when starting a bluetooth connection",
                 e);
             throw e;
         }
 
-        if (!btSocket.isConnected()) {
+        if (!BluetoothManager.getInstance().isConnected()) {
             Log.e(TAG, "startObdConnection: Bluetooth Socket isn't connected");
             throw new IOException();
         }
@@ -159,13 +148,7 @@ public class ObdGatewayService extends AbstractGatewayService {
         taskQueue.clear();
         isRunning = false;
 
-        if (btSocket != null) {
-            try {
-                btSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "stopService: Error while closing bluetooth socket", e);
-            }
-        }
+        BluetoothManager.getInstance().disconnect();
 
         stopSelf();
     }
