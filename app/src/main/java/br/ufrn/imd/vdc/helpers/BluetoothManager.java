@@ -99,11 +99,11 @@ public class BluetoothManager {
         return socket != null && socket.isConnected();
     }
 
-    public boolean setUpDevice(String MAC) {
+    public boolean setUpDevice(String macAddress) {
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
 
         Log.d(TAG, "setUpDevice: Creating a Bluetooth Device");
-        device = btAdapter.getRemoteDevice(MAC);
+        device = btAdapter.getRemoteDevice(macAddress);
         Log.d(TAG, "setUpDevice: Device Name: " + device.getName());
 
         if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
