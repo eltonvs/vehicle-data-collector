@@ -44,9 +44,11 @@ public class BluetoothManager {
      */
     public BluetoothSocket connect() throws IOException {
         if (isConnected()) {
-            if (socket.getRemoteDevice().getName().equals(device.getName())) {
+            if (socket.getRemoteDevice().getAddress().equals(device.getAddress())) {
+                Log.d(TAG, "connect: Already connected, using the same socket...");
                 return socket;
             } else {
+                Log.d(TAG, "connect: Connected to another device. Disconnecting...");
                 disconnect();
             }
         }
@@ -61,31 +63,36 @@ public class BluetoothManager {
             socket = device.createRfcommSocketToServiceRecord(MY_UUID);
             socket.connect();
         } catch (IOException e) {
-            Log.e(TAG, "There was an error while establishing Bluetooth connection. Falling back..",
-                e);
+            Log.e(TAG, "Error while establishing Bluetooth connection. Falling back..", e);
             fallbackConnect();
         }
         return socket;
     }
 
     private void fallbackConnect() throws IOException {
-        if (socket == null) return;
+        if (socket == null) {
+            return;
+        }
+
         Class<?> clazz = socket.getRemoteDevice().getClass();
         Class<?>[] paramTypes = new Class<?>[]{Integer.TYPE};
+
         try {
             Method m = clazz.getMethod("createRfcommSocket", paramTypes);
             Object[] params = new Object[]{Integer.valueOf(1)};
             BluetoothSocket sockFallback = (BluetoothSocket) m.invoke(socket.getRemoteDevice(),
                 params);
             sockFallback.connect();
+            socket = sockFallback;
         } catch (Exception e) {
             Log.e(TAG, "Couldn't fallback while establishing Bluetooth connection.", e);
+            socket = null;
             throw new IOException(e.getMessage());
         }
     }
 
     public void disconnect() {
-        if (socket.isConnected()) {
+        if (isConnected()) {
             try {
                 socket.close();
                 Log.d(TAG, "disconnect: Socket successfully disconnected");
@@ -106,13 +113,17 @@ public class BluetoothManager {
         device = btAdapter.getRemoteDevice(macAddress);
         Log.d(TAG, "setUpDevice: Device Name: " + device.getName());
 
-        if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
-            Log.d(TAG, "setUpDevice: Device is bonded, starting connection");
+        if (isDeviceBonded()) {
+            Log.d(TAG, "setUpDevice: Device is bonded, ready to start connection");
             return true;
         }
 
         Log.d(TAG, "setUpDevice: Error bonding device");
         return false;
+    }
+
+    public boolean isDeviceBonded() {
+        return device != null && device.getBondState() == BluetoothDevice.BOND_BONDED;
     }
 
     public BluetoothDevice getDevice() {

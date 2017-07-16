@@ -1,7 +1,9 @@
 package br.ufrn.imd.vdc.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,13 +14,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import br.ufrn.imd.vdc.R;
+import br.ufrn.imd.vdc.helpers.BluetoothManager;
 import br.ufrn.imd.vdc.helpers.ObdServiceManager;
 import br.ufrn.imd.vdc.obd.CommandTask;
+import br.ufrn.imd.vdc.obd.ObdCommandList;
+import br.ufrn.imd.vdc.obd.ObdCommandTask;
+import br.ufrn.imd.vdc.services.ObdGatewayService;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
 
-    final ObdServiceManager serviceManager = new ObdServiceManager(this);
+    // final ObdServiceManager serviceManager = new ObdServiceManager(this);
     Button btnStartService;
     Button btnStopService;
     Button btnEnqueueCommands;
@@ -47,6 +53,12 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         updateState(ObdServiceManager.Status.DISCONNECTED);
+
+        // Start/Stop bluetooth
+        Button btnStartBluetooth = (Button) findViewById(R.id.btn_connect_bluetooth);
+        Button btnStopBluetooth = (Button) findViewById(R.id.btn_disconnect_bluetooth);
+        btnStartBluetooth.setOnClickListener(this);
+        btnStopBluetooth.setOnClickListener(this);
     }
 
     private void setActionBarSubtitle(String subtitle) {
@@ -78,17 +90,50 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_connect_bluetooth:
+                Log.d(TAG, "onClick: Creating bluetooth connection");
+
+                // Bluetooth
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String btDeviceMAC = prefs.getString(SettingsActivity.BLUETOOTH_DEVICES, "-1");
+
+                if (!btDeviceMAC.equals("-1") &&
+                    BluetoothManager.getInstance().setUpDevice(btDeviceMAC)) {
+                    setActionBarSubtitle(
+                        BluetoothManager.getInstance().getDevice().getName() + " - " + btDeviceMAC);
+                }
+                break;
+            case R.id.btn_disconnect_bluetooth:
+                Log.d(TAG, "onClick: disconnecting bluetooth");
+                setActionBarSubtitle(getString(R.string.disconnecting));
+                BluetoothManager.getInstance().disconnect();
+                if (!BluetoothManager.getInstance().isConnected()) {
+                    setActionBarSubtitle(getString(R.string.disconnected));
+                }
+                break;
             case R.id.btn_start_service:
                 Log.d(TAG, "onClick: Calling doBindService()");
-                serviceManager.doBindService();
+
+                if (!BluetoothManager.getInstance().isDeviceBonded()) {
+                    Log.d(TAG, "onClick: Device isn't bonded");
+                    return;
+                }
+                ObdGatewayService.enqueueTask(this, new ObdCommandTask(ObdCommandList.getInstance()
+                    .setupDevice()));
+                ObdGatewayService.enqueueTask(this, new ObdCommandTask(ObdCommandList.getInstance()
+                    .vehicleInformation()));
                 break;
             case R.id.btn_stop_service:
                 Log.d(TAG, "onClick: Calling doUnbindService()");
-                serviceManager.doUnbindService();
+                // serviceManager.doUnbindService();
                 break;
             case R.id.btn_enqueue_commands:
                 Log.d(TAG, "onClick: Enqueuing commands");
-                serviceManager.enqueueDefaultCommands();
+                if (BluetoothManager.getInstance().isDeviceBonded()) {
+                    return;
+                }
+                ObdGatewayService.enqueueTask(this, new ObdCommandTask(ObdCommandList.getInstance()
+                    .dynamicData()));
                 break;
             case R.id.btn_clear_log:
                 Log.d(TAG, "onClick: Clearing OBD Commands Log");

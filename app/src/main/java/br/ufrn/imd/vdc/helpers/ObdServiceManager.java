@@ -16,8 +16,8 @@ import br.ufrn.imd.vdc.activities.SettingsActivity;
 import br.ufrn.imd.vdc.activities.TaskProgressListener;
 import br.ufrn.imd.vdc.obd.ObdCommandList;
 import br.ufrn.imd.vdc.obd.ObdCommandTask;
-import br.ufrn.imd.vdc.services.AbstractGatewayService;
-import br.ufrn.imd.vdc.services.ObdGatewayService;
+import br.ufrn.imd.vdc.services.AbstractGatewayServiceOld;
+import br.ufrn.imd.vdc.services.ObdGatewayServiceOld;
 
 /**
  * Created by elton on 5/15/17.
@@ -27,7 +27,7 @@ public class ObdServiceManager {
     private static final String TAG = ObdServiceManager.class.getName();
     private final ServiceConnection serviceConnection;
     private final TaskProgressListener context;
-    private AbstractGatewayService service;
+    private AbstractGatewayServiceOld service;
     private volatile Status currentState;
 
     public ObdServiceManager(final TaskProgressListener context) {
@@ -38,7 +38,7 @@ public class ObdServiceManager {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 Log.d(TAG, "onServiceConnected: Service is bound");
                 if (verifyPreRequisites()) {
-                    service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder)
+                    service = ((AbstractGatewayServiceOld.AbstractGatewayServiceBinder) binder)
                         .getService();
                     service.setContext(context);
                     try {
@@ -106,7 +106,7 @@ public class ObdServiceManager {
             setCurrentState(Status.CONNECTING);
             if (verifyPreRequisites()) {
                 Log.d(TAG, "doBindService: Creating Service");
-                Intent intentService = new Intent(context, ObdGatewayService.class);
+                Intent intentService = new Intent(context, ObdGatewayServiceOld.class);
                 if (context.bindService(intentService, serviceConnection,
                     Context.BIND_AUTO_CREATE)) {
                     Log.d(TAG, "doBindService: Service is bound");

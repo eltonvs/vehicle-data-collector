@@ -17,8 +17,9 @@ import br.ufrn.imd.vdc.obd.CommandTask;
  * Created by elton on 12/05/17.
  */
 
-public abstract class AbstractGatewayService extends Service {
-    private static final String TAG = AbstractGatewayService.class.getName();
+@Deprecated
+public abstract class AbstractGatewayServiceOld extends Service {
+    private static final String TAG = AbstractGatewayServiceOld.class.getName();
     protected final BlockingQueue<CommandTask> taskQueue = new LinkedBlockingQueue<>();
     private final IBinder binder = new AbstractGatewayServiceBinder();
     private final Thread t = new Thread(new Runnable() {
@@ -86,8 +87,8 @@ public abstract class AbstractGatewayService extends Service {
     public abstract void stopService();
 
     public class AbstractGatewayServiceBinder extends Binder {
-        public AbstractGatewayService getService() {
-            return AbstractGatewayService.this;
+        public AbstractGatewayServiceOld getService() {
+            return AbstractGatewayServiceOld.this;
         }
     }
 }
