@@ -13,7 +13,7 @@ public class ObdGatewayServiceManager {
     private static final String TAG = ObdGatewayServiceManager.class.getName();
     private static final ObdGatewayServiceManager ourInstance = new ObdGatewayServiceManager();
 
-    private BluetoothManager btManager = BluetoothManager.getInstance();
+    private final BluetoothManager btManager = BluetoothManager.getInstance();
 
     private ObdGatewayServiceManager() {
     }

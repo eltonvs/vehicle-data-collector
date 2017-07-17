@@ -17,7 +17,7 @@ public class ObdGatewayService extends IntentService {
 
     private static final String TAG = ObdGatewayService.class.getName();
 
-    private static volatile BlockingQueue<CommandTask> tasks = new LinkedBlockingQueue<>();
+    private static final BlockingQueue<CommandTask> tasks = new LinkedBlockingQueue<>();
 
     public ObdGatewayService() {
         super("ObdGatewayService");
@@ -48,7 +48,6 @@ public class ObdGatewayService extends IntentService {
                 } catch (IOException e) {
                     Log.e(TAG, "startObdConnection: Error occurred when starting a bluetooth " +
                                "connection", e);
-                    return;
                 }
             }
         }

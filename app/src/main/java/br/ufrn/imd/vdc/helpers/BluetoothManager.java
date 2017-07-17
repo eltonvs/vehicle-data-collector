@@ -39,23 +39,22 @@ public class BluetoothManager {
      * See http://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might
      * -closed-bluetooth-on-android-4-3/18786701#18786701
      *
-     * @return The BluetoothSocket
      * @throws IOException Bluetooth connection error
      */
-    public BluetoothSocket connect() throws IOException {
+    public void connect() throws IOException {
+        if (device == null) {
+            Log.e(TAG, "connect: Device is not set");
+            return;
+        }
+
         if (isConnected()) {
             if (socket.getRemoteDevice().getAddress().equals(device.getAddress())) {
-                Log.d(TAG, "connect: Already connected, using the same socket...");
-                return socket;
+                Log.d(TAG, "connect: Already connected, no need to change socket...");
+                return;
             } else {
                 Log.d(TAG, "connect: Connected to another device. Disconnecting...");
                 disconnect();
             }
-        }
-
-        if (device == null) {
-            Log.e(TAG, "connect: Device is not set");
-            return null;
         }
 
         Log.d(TAG, "Starting Bluetooth connection..");
@@ -66,7 +65,6 @@ public class BluetoothManager {
             Log.e(TAG, "Error while establishing Bluetooth connection. Falling back..", e);
             fallbackConnect();
         }
-        return socket;
     }
 
     private void fallbackConnect() throws IOException {

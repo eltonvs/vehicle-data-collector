@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 public class ObdCommandGroup implements ICommand {
-    private ArrayList<ICommand> commands;
+    private final ArrayList<ICommand> commands;
 
     public ObdCommandGroup() {
         commands = new ArrayList<>();
