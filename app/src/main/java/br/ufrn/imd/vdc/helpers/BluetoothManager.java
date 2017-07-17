@@ -41,10 +41,10 @@ public class BluetoothManager {
      *
      * @throws IOException Bluetooth connection error
      */
-    public void connect() throws IOException {
+    public void connect() throws IOException, DeviceNotSetException {
         if (device == null) {
             Log.e(TAG, "connect: Device is not set");
-            return;
+            throw new DeviceNotSetException();
         }
 
         if (isConnected()) {
@@ -130,5 +130,8 @@ public class BluetoothManager {
 
     public BluetoothSocket getSocket() {
         return socket;
+    }
+
+    public class DeviceNotSetException extends Exception {
     }
 }

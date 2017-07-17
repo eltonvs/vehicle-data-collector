@@ -18,6 +18,7 @@ public class ObdGatewayService extends IntentService {
     private static final String TAG = ObdGatewayService.class.getName();
 
     private static final BlockingQueue<CommandTask> tasks = new LinkedBlockingQueue<>();
+    private final BluetoothManager btManager = BluetoothManager.getInstance();
 
     public ObdGatewayService() {
         super("ObdGatewayService");
@@ -34,20 +35,19 @@ public class ObdGatewayService extends IntentService {
             if (ACTION_SEND_OBD_COMMAND.equals(action)) {
                 try {
                     CommandTask cmdTask = tasks.take();
-                    Log.d(TAG, "onHandleIntent: Connecting to bluetooth device");
-                    BluetoothManager.getInstance().connect();
-
-                    if (BluetoothManager.getInstance().isConnected()) {
-                        executeTask(cmdTask);
-                    } else {
-                        Log.e(TAG, "startObdConnection: Bluetooth Socket isn't connected");
+                    if (!btManager.isConnected()) {
+                        Log.d(TAG, "onHandleIntent: BT Socket isn't connected. Connecting...");
+                        btManager.connect();
                     }
+
+                    executeTask(cmdTask);
                 } catch (InterruptedException e) {
                     Log.e(TAG, "onHandleIntent: InterruptedException Error", e);
                     Thread.currentThread().interrupt();
+                } catch (BluetoothManager.DeviceNotSetException e) {
+                    Log.e(TAG, "onHandleIntent: Bluetooth Device is not set", e);
                 } catch (IOException e) {
-                    Log.e(TAG, "startObdConnection: Error occurred when starting a bluetooth " +
-                               "connection", e);
+                    Log.e(TAG, "onHandleIntent: Error when starting a bluetooth connection", e);
                 }
             }
         }
@@ -61,11 +61,11 @@ public class ObdGatewayService extends IntentService {
         if (task.getState().equals(CommandTask.CommandTaskState.NEW)) {
             Log.d(TAG, "executeTask: Task state is NEW. Run it...");
             task.setState(CommandTask.CommandTaskState.RUNNING);
-            if (BluetoothManager.getInstance().isConnected()) {
+            if (btManager.isConnected()) {
                 try {
                     task.getCommand()
-                        .run(BluetoothManager.getInstance().getSocket().getInputStream(),
-                            BluetoothManager.getInstance().getSocket().getOutputStream());
+                        .run(btManager.getSocket().getInputStream(),
+                            btManager.getSocket().getOutputStream());
                 } catch (IOException e) {
                     Log.e(TAG, "executeTask: IOException on run command", e);
                 } catch (InterruptedException e) {
