@@ -136,6 +136,13 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        // Unregister receiver on Activity Destroy
+        unregisterReceiver(receiver);
+        super.onDestroy();
+    }
+
     private void clearObdLog() {
         TextView tvResultsLog = (TextView) findViewById(R.id.tv_results);
         tvResultsLog.setText("");
