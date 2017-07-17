@@ -39,7 +39,6 @@
                 android:value="br.ufrn.imd.vdc.activities.MainActivity"/>
         </activity>
 
-        <service android:name=".services.ObdGatewayServiceOld"/>
         <service
             android:name=".services.ObdGatewayService"
             android:exported="false">

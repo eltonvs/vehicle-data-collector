@@ -1,34 +1,30 @@
 package br.ufrn.imd.vdc.services;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import br.ufrn.imd.vdc.helpers.BluetoothManager;
 import br.ufrn.imd.vdc.obd.CommandTask;
 
 public class ObdGatewayService extends IntentService {
-    private static final String ACTION_SEND_OBD_COMMAND = "br.ufrn.imd.vdc.services.action" +
-                                                          ".ACTION_SEND_OBD_COMMAND";
+    public static final String ACTION_SEND_OBD_COMMAND = "br.ufrn.imd.vdc.services.action" +
+                                                         ".ACTION_SEND_OBD_COMMAND";
 
     private static final String TAG = ObdGatewayService.class.getName();
 
-    private static Queue<CommandTask> tasks = new LinkedBlockingQueue<>();
+    private static volatile BlockingQueue<CommandTask> tasks = new LinkedBlockingQueue<>();
 
     public ObdGatewayService() {
         super("ObdGatewayService");
     }
 
-    public static void enqueueTask(Context context, CommandTask task) {
-        Intent intent = new Intent(context, ObdGatewayService.class);
-        intent.setAction(ACTION_SEND_OBD_COMMAND);
+    static void enqueueTask(CommandTask task) {
         tasks.add(task);
-        context.startService(intent);
     }
 
     @Override
@@ -36,23 +32,24 @@ public class ObdGatewayService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_SEND_OBD_COMMAND.equals(action)) {
-                CommandTask cmdTask = tasks.poll();
-
                 try {
+                    CommandTask cmdTask = tasks.take();
                     Log.d(TAG, "onHandleIntent: Connecting to bluetooth device");
                     BluetoothManager.getInstance().connect();
+
+                    if (BluetoothManager.getInstance().isConnected()) {
+                        executeTask(cmdTask);
+                    } else {
+                        Log.e(TAG, "startObdConnection: Bluetooth Socket isn't connected");
+                    }
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "onHandleIntent: InterruptedException Error", e);
+                    Thread.currentThread().interrupt();
                 } catch (IOException e) {
                     Log.e(TAG, "startObdConnection: Error occurred when starting a bluetooth " +
-                               "connection",
-                        e);
+                               "connection", e);
                     return;
                 }
-
-                if (!BluetoothManager.getInstance().isConnected()) {
-                    Log.e(TAG, "startObdConnection: Bluetooth Socket isn't connected");
-                }
-
-                executeTask(cmdTask);
             }
         }
     }
