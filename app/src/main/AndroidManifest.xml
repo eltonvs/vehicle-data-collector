@@ -43,6 +43,12 @@
             android:name=".services.ObdGatewayService"
             android:exported="false">
         </service>
+
+        <receiver
+            android:name=".services.TaskBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

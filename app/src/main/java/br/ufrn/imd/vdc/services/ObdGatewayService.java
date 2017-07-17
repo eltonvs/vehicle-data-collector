@@ -84,5 +84,15 @@ public class ObdGatewayService extends IntentService {
         Log.d(TAG, "executeTask: task: " + task.getCommand().getName() + " | state: " +
                    task.getState() + " | value: " + task.getCommand().getResult() + "\n" +
                    task.getCommand().toString());
+        sendTaskBroadcast(task);
+    }
+
+    private void sendTaskBroadcast(CommandTask task) {
+        Intent broadcastIntent = new Intent();
+
+        broadcastIntent.setAction(TaskBroadcastReceiver.TASK_RESPONSE);
+        broadcastIntent.putExtra(TaskBroadcastReceiver.TASK_STRING, task.getCommand().toString());
+        Log.d(TAG, "sendTaskBroadcast: sending broadcast");
+        sendBroadcast(broadcastIntent);
     }
 }

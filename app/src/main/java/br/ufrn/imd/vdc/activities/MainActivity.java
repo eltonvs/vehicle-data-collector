@@ -1,6 +1,7 @@
 package br.ufrn.imd.vdc.activities;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import br.ufrn.imd.vdc.R;
 import br.ufrn.imd.vdc.obd.CommandTask;
 import br.ufrn.imd.vdc.services.ObdGatewayServiceManager;
+import br.ufrn.imd.vdc.services.TaskBroadcastReceiver;
 
 public class MainActivity extends TaskProgressListener implements View.OnClickListener {
     private static final String TAG = MainActivity.class.getName();
@@ -26,10 +28,17 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
     private Button btnStartBluetooth;
     private Button btnStopBluetooth;
 
+    private TaskBroadcastReceiver receiver = new TaskBroadcastReceiver();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(TaskBroadcastReceiver.TASK_RESPONSE);
+
+        registerReceiver(receiver, intentFilter);
 
         setup();
     }
