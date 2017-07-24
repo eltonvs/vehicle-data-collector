@@ -1,5 +1,7 @@
 package br.ufrn.imd.vdc.services;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -41,6 +43,20 @@ public class ObdGatewayServiceManager {
 
     public void enqueueDefaultCommands(Context context) {
         enqueueTask(context, new ObdCommandTask(ObdCommandList.getInstance().dynamicData()));
+    }
+
+    public void startAlarm(Context context, long time) {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmManagerReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), time, pi);
+    }
+
+    public void stopAlarm(Context context) {
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, AlarmManagerReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, intent, 0);
+        am.cancel(pi);
     }
 
     public boolean setUpDevice(String macAddress) {

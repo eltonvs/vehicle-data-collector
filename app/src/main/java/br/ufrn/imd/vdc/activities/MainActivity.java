@@ -119,9 +119,11 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
             case R.id.btn_start_service:
                 Log.d(TAG, "onClick: Calling doBindService()");
                 ObdGatewayServiceManager.getInstance().enqueueInitialCommands(this);
+                ObdGatewayServiceManager.getInstance().startAlarm(this, 60 * 1000);  // 1 min
                 break;
             case R.id.btn_stop_service:
                 Log.d(TAG, "onClick: Calling doUnbindService()");
+                ObdGatewayServiceManager.getInstance().stopAlarm(this);
                 break;
             case R.id.btn_enqueue_commands:
                 Log.d(TAG, "onClick: Enqueuing commands");
@@ -162,7 +164,7 @@ public class MainActivity extends TaskProgressListener implements View.OnClickLi
                 btnStartBluetooth.setEnabled(false);
                 btnStopBluetooth.setEnabled(true);
                 btnStartService.setEnabled(true);
-                btnStopService.setEnabled(false);
+                btnStopService.setEnabled(true);
                 btnEnqueueCommands.setEnabled(true);
                 break;
             case DISCONNECTED:
