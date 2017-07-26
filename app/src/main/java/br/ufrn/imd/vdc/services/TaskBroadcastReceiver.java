@@ -12,6 +12,7 @@ import br.ufrn.imd.vdc.R;
 public class TaskBroadcastReceiver extends BroadcastReceiver {
     public static final String TASK_RESPONSE = "br.ufrn.imd.vdc.action.TASK_RESPONSE";
     public static final String TASK_STRING = "taskString";
+    public static final String OBD_READING = "obdReading";
     private static final String TAG = TaskBroadcastReceiver.class.getName();
 
     @Override

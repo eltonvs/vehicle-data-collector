@@ -5,6 +5,8 @@ import com.github.pires.obd.commands.ObdCommand;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by elton on 12/05/17.
@@ -45,6 +47,13 @@ public class ObdCommandAdapter implements ICommand {
     @Override
     public String getPID() {
         return obdCommand.getCommandPID();
+    }
+
+    @Override
+    public Map<String, String> getMap() {
+        Map<String, String> retMap = new HashMap<>();
+        retMap.put(getName(), getResult());
+        return retMap;
     }
 
     @Override

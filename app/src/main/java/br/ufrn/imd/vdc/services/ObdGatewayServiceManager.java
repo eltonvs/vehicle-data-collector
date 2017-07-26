@@ -16,6 +16,7 @@ public class ObdGatewayServiceManager {
     private static final ObdGatewayServiceManager ourInstance = new ObdGatewayServiceManager();
 
     private final BluetoothManager btManager = BluetoothManager.getInstance();
+    private final ObdCommandList obdCommands = ObdCommandList.getInstance();
 
     private ObdGatewayServiceManager() {
     }
@@ -37,12 +38,12 @@ public class ObdGatewayServiceManager {
     }
 
     public void enqueueInitialCommands(Context context) {
-        enqueueTask(context, new ObdCommandTask(ObdCommandList.getInstance().setupDevice()));
-        enqueueTask(context, new ObdCommandTask(ObdCommandList.getInstance().vehicleInformation()));
+        enqueueTask(context, new ObdCommandTask(obdCommands.setupDevice()));
+        enqueueTask(context, new ObdCommandTask(obdCommands.vehicleInformation()));
     }
 
     public void enqueueDefaultCommands(Context context) {
-        enqueueTask(context, new ObdCommandTask(ObdCommandList.getInstance().dynamicData()));
+        enqueueTask(context, new ObdCommandTask(obdCommands.dynamicData()));
     }
 
     public void startAlarm(Context context, long time) {

@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by elton on 02/06/17.
@@ -75,6 +77,18 @@ public class ObdCommandGroup implements ICommand {
             results.add((String) command.getPID());
         }
         return results;
+    }
+
+    @Override
+    public Map<String, String> getMap() {
+        Map<String, String> retMap = new HashMap<>();
+        for (ICommand command : commands) {
+            Map<String, String> cmdMap = command.getMap();
+            for (Map.Entry<String, String> entry : cmdMap.entrySet()) {
+                retMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return retMap;
     }
 
     @Override

@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import br.ufrn.imd.vdc.helpers.BluetoothManager;
 import br.ufrn.imd.vdc.obd.CommandTask;
+import br.ufrn.imd.vdc.obd.ObdReading;
 
 public class ObdGatewayService extends IntentService {
     public static final String ACTION_SEND_OBD_COMMAND = "br.ufrn.imd.vdc.services.action" +
@@ -92,6 +94,13 @@ public class ObdGatewayService extends IntentService {
 
         broadcastIntent.setAction(TaskBroadcastReceiver.TASK_RESPONSE);
         broadcastIntent.putExtra(TaskBroadcastReceiver.TASK_STRING, task.getCommand().toString());
+
+        Map<String, String> readingsMap = task.getCommand().getMap();
+
+        ObdReading reading = new ObdReading(0, 0, "", 0, 0, 0, readingsMap);
+        broadcastIntent.setAction(TaskBroadcastReceiver.OBD_READING);
+        broadcastIntent.putExtra(TaskBroadcastReceiver.OBD_READING, reading);
+
         Log.d(TAG, "sendTaskBroadcast: sending broadcast");
         sendBroadcast(broadcastIntent);
     }
