@@ -1,5 +1,7 @@
 package br.ufrn.imd.vdc.obd;
 
+import com.google.gson.Gson;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,5 +90,10 @@ public class ObdReading implements Serializable {
 
     public void addReading(String sensor, String value) {
         this.readings.put(sensor, value);
+    }
+
+    public String toJSON() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

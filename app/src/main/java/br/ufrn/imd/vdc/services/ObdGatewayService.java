@@ -98,7 +98,6 @@ public class ObdGatewayService extends IntentService {
         Map<String, String> readingsMap = task.getCommand().getMap();
 
         ObdReading reading = new ObdReading(0, 0, "", 0, 0, 0, readingsMap);
-        broadcastIntent.setAction(TaskBroadcastReceiver.OBD_READING);
         broadcastIntent.putExtra(TaskBroadcastReceiver.OBD_READING, reading);
 
         Log.d(TAG, "sendTaskBroadcast: sending broadcast");
