@@ -21,6 +21,29 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/btn_connect_bluetooth"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/connect_bluetooth" />
+
+        <Button
+            android:id="@+id/btn_disconnect_bluetooth"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/disconnect_bluetooth" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
             android:id="@+id/btn_start_service"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
