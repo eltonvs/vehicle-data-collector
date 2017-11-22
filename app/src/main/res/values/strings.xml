@@ -80,5 +80,8 @@
     <string name="pref_title_engine_displacement">Engine Displacement (liters)</string>
     <string name="pref_description_engine_displacement">Used for fuel economy on vehicles without MAF sensor</string>
     <string name="pref_default_engine_displacement">1.0</string>
+
+    <!--Service Strings-->
+    <string name="url_base">https://vdc-api-eltonvs1.c9users.io:8080</string>
     <!-- End Settings Strings -->
 </resources>
