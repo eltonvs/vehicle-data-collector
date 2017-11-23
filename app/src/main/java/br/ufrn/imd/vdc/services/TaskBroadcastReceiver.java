@@ -4,17 +4,8 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.StrictMode;
 import android.util.Log;
 import android.widget.TextView;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 
 import br.ufrn.imd.vdc.R;
 import br.ufrn.imd.vdc.obd.ObdReading;
@@ -30,8 +21,8 @@ public class TaskBroadcastReceiver extends BroadcastReceiver {
         Log.d(TAG, "onReceive: Received something...");
         ObdReading reading = (ObdReading) intent.getSerializableExtra(OBD_READING);
         String readingJson;
-        if(reading != null){
-             readingJson = reading.toJSON();
+        if (reading != null) {
+            readingJson = reading.toJSON();
             ServiceObds.sendJson(readingJson, context);
         }
 
@@ -39,8 +30,7 @@ public class TaskBroadcastReceiver extends BroadcastReceiver {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    TextView tvResultsLog = (TextView) ((Activity) context)
-                        .findViewById(R.id.tv_results);
+                    TextView tvResultsLog = (TextView) ((Activity) context).findViewById(R.id.tv_results);
                     tvResultsLog.append(intent.getStringExtra(TASK_STRING));
                 }
             });

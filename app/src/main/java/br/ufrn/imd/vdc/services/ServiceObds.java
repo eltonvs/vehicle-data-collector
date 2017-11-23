@@ -2,13 +2,8 @@ package br.ufrn.imd.vdc.services;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.StrictMode;
 import android.util.Log;
-
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONObject;
-
-import br.ufrn.imd.vdc.obd.ObdReading;
 
 
 /**
@@ -17,26 +12,18 @@ import br.ufrn.imd.vdc.obd.ObdReading;
 
 public class ServiceObds {
 
-    public static void sendObd(ObdReading obdReading, Context context) {
-        try {
-            Uri.Builder builder = new Uri.Builder()
-                    .appendQueryParameter("vehicleId", obdReading.getVehicleId())
-                    .appendQueryParameter("altitude", String.valueOf(obdReading.getAltitude()))
-                    .appendQueryParameter("longitude", String.valueOf(obdReading.getLongitude()))
-                    .appendQueryParameter("latitude", String.valueOf(obdReading.getLatitude()))
-                    .appendQueryParameter("timestamp", String.valueOf(obdReading.getTimestamp()))
-                    .appendQueryParameter("readings", new JSONObject(obdReading.getReadings()).toString());
-            Log.d("TESTE: ", WebServiceImpl.sendPost("obds", builder.build().getEncodedQuery(), context));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void sendJson(String obdJson, Context context) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         try {
             Uri.Builder builder = new Uri.Builder()
+                    .appendQueryParameter("vehicleId", "123")
+                    .appendQueryParameter("altitude", "0")
+                    .appendQueryParameter("longitude", "0")
+                    .appendQueryParameter("latitude", "0")
+                    .appendQueryParameter("timestamp", "0")
                     .appendQueryParameter("readings", obdJson);
-            Log.d("TESTE: ", WebServiceImpl.sendPost("obds", builder.build().getEncodedQuery(), context));
+            Log.d("TESTE: ", WebServiceImpl.sendPost("/obds", builder.build().getEncodedQuery(), context));
         } catch (Exception e) {
             e.printStackTrace();
         }

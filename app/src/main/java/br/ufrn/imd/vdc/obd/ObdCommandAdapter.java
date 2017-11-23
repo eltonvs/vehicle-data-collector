@@ -52,7 +52,7 @@ public class ObdCommandAdapter implements ICommand {
     @Override
     public Map<String, String> getMap() {
         Map<String, String> retMap = new HashMap<>();
-        retMap.put(getName(), getResult());
+        retMap.put(getName(), obdCommand.getCalculatedResult());
         return retMap;
     }
 
