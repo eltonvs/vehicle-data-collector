@@ -32,5 +32,5 @@ dependencies {
     compile 'com.android.support:support-vector-drawable:25.3.1'
     compile 'com.github.pires:obd-java-api:1.0-RC16'
     compile 'com.google.code.gson:gson:2.7'
-    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.13.1'
 }
